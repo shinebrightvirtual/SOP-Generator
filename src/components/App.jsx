@@ -3,6 +3,7 @@ import { SECTION_ORDER } from "../lib/sections.js";
 import { S } from "../styles/theme.js";
 import { typography } from "../styles/theme.js";
 
+import WelcomeScreen from "./WelcomeScreen.jsx";
 import Header from "./Header.jsx";
 import TierToggle from "./TierToggle.jsx";
 import SectionNav from "./SectionNav.jsx";
@@ -22,6 +23,7 @@ const DEFAULT_BRAND = {
 };
 
 export default function App() {
+  const [appStage, setAppStage] = useState("welcome");
   const [isPro, setIsPro] = useState(false);
   const [activeView, setActiveView] = useState("editor");
   const [activeSection, setActiveSection] = useState("overview");
@@ -47,6 +49,14 @@ export default function App() {
       setData(prev => ({ ...prev, [sectionId]: { ...prev[sectionId], [key]: value } }));
     }
   }, [aiMode]);
+
+  const handleStart = ({ businessName, startMethod }) => {
+    setBrand(b => ({ ...b, businessName }));
+    setAppStage("editor");
+    if (startMethod === "video") {
+      setIsPro(true);
+    }
+  };
 
   const handleTranscriptReady = (parsed) => {
     setAiData(parsed);
@@ -75,9 +85,13 @@ export default function App() {
 
   const currentData = aiMode ? aiData : data;
 
+  if (appStage === "welcome") {
+    return <WelcomeScreen onStart={handleStart} initialBusinessName={brand.businessName} />;
+  }
+
   return (
     <div style={S.app}>
-      <Header />
+      <Header businessName={brand.businessName} />
 
       <div style={{ maxWidth: "720px", margin: "14px auto 0", padding: "0 16px" }}>
         <TierToggle isPro={isPro} onToggle={() => setIsPro(p => !p)} />
