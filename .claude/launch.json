@@ -1,0 +1,9 @@
+{
+  "servers": [
+    {
+      "name": "Shine Bright SOP Generator",
+      "command": "npm run dev",
+      "url": "http://localhost:3000"
+    }
+  ]
+}
