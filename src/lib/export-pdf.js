@@ -15,9 +15,9 @@ function addWrappedText(doc, text, x, y, maxWidth, fontSize) {
 
 export async function exportToPDF(data, brand, isPro) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const pc = isPro ? brand.primaryColor : "#1B3A4B";
-  const ac = isPro ? brand.accentColor : "#E8985E";
-  const biz = isPro && brand.businessName ? brand.businessName : "";
+  const pc = brand.primaryColor || "#2D3526";
+  const ac = brand.accentColor || "#C49A3C";
+  const biz = brand.businessName || "";
   const title = data.overview?.sopTitle || "Standard Operating Procedure";
 
   const hexToRGB = (hex) => {
@@ -81,7 +81,7 @@ export async function exportToPDF(data, brand, isPro) {
     }
   };
 
-  const sectionsToShow = SECTION_ORDER.filter(k => SECTIONS[k].free || isPro);
+  const sectionsToShow = SECTION_ORDER.filter(k => SECTIONS[k].basic || isPro);
 
   for (const key of sectionsToShow) {
     const sec = SECTIONS[key];

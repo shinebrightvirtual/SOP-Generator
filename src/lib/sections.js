@@ -12,20 +12,20 @@ export const SECTIONS = {
     id: "overview",
     num: 1,
     title: "Overview & Ownership",
-    subtitle: "The quick snapshot",
-    free: true,
+    subtitle: "The quick snapshot — what's it called and who owns it?",
+    basic: true,
     aiPrompt:
       "Extract: SOP title, category (Operations/Client Experience/Marketing/Finance/Team), who owns this process, who executes it, and frequency.",
     fields: [
       {
         key: "sopTitle",
-        label: "SOP Title",
+        label: "What's this SOP called?",
         type: "text",
         placeholder: "e.g., Client Onboarding Process",
       },
       {
         key: "category",
-        label: "Category",
+        label: "What category does it fall under?",
         type: "select",
         options: [
           "Operations",
@@ -37,19 +37,19 @@ export const SECTIONS = {
       },
       {
         key: "owner",
-        label: "Owner (Accountable)",
+        label: "Who's accountable for this? (even if they don't do the work)",
         type: "text",
-        placeholder: "Role or name of the person accountable",
+        placeholder: "e.g., Jess, Operations Manager",
       },
       {
         key: "executor",
-        label: "Executor (Does the Work)",
+        label: "Who actually does this process?",
         type: "text",
-        placeholder: "Who performs this process?",
+        placeholder: "e.g., VA, Team Lead, You",
       },
       {
         key: "frequency",
-        label: "Frequency",
+        label: "How often does this happen?",
         type: "select",
         options: [
           "One-time",
@@ -77,8 +77,8 @@ export const SECTIONS = {
     id: "whyItMatters",
     num: 2,
     title: "Why This Matters",
-    subtitle: "The business case for this process",
-    free: true,
+    subtitle: "What problem does this solve — and what breaks if you skip it?",
+    basic: true,
     aiPrompt:
       "Extract: what problem this process solves, the desired outcome, and what goes wrong if skipped.",
     fields: [
@@ -87,20 +87,20 @@ export const SECTIONS = {
         label: "What problem does this solve?",
         type: "textarea",
         placeholder:
-          "Describe the pain point or gap this SOP addresses...",
+          "What was falling through the cracks before this process existed?",
       },
       {
         key: "desiredOutcome",
-        label: "Desired outcome when done well",
+        label: "What does a great result look like?",
         type: "textarea",
-        placeholder: "What does a great result look like?",
+        placeholder: "When this goes perfectly, what happens?",
       },
       {
         key: "riskOfSkipping",
-        label: "What breaks if we skip this?",
+        label: "What breaks if you skip this?",
         type: "textarea",
         placeholder:
-          "The cost, risk, or consequence of not following this process...",
+          "The real cost — time, money, client trust — of not following this...",
       },
     ],
   },
@@ -109,37 +109,37 @@ export const SECTIONS = {
     id: "triggers",
     num: 3,
     title: "Triggers & Boundaries",
-    subtitle: "When it starts, when it ends",
-    free: true,
+    subtitle: "What kicks this off — and how do you know you're done?",
+    basic: true,
     aiPrompt:
       "Extract: what triggers this process, what marks completion, prerequisites, and downstream dependencies.",
     fields: [
       {
         key: "trigger",
-        label: "What triggers this SOP?",
+        label: "What kicks this process off?",
         type: "textarea",
         placeholder:
-          "e.g., New client signs contract, order is placed...",
+          "e.g., A new client signs their contract, an order comes in...",
       },
       {
         key: "completion",
-        label: "What signals completion?",
+        label: "How do you know it's done?",
         type: "textarea",
-        placeholder: "How do you know this process is done?",
+        placeholder: "The clear signal that this process is fully wrapped up",
       },
       {
         key: "prerequisites",
-        label: "What needs to happen first?",
+        label: "What needs to be in place first?",
         type: "textarea",
         placeholder:
-          "Dependencies or prerequisites before starting...",
+          "Anything that has to happen before you can start...",
       },
       {
         key: "downstream",
         label: "What depends on this being done?",
         type: "textarea",
         placeholder:
-          "Other processes that rely on this being completed correctly...",
+          "Other processes that rely on this being finished correctly...",
       },
     ],
   },
@@ -148,8 +148,8 @@ export const SECTIONS = {
     id: "bigPicture",
     num: 4,
     title: "The Big Picture",
-    subtitle: "The 30-second overview",
-    free: true,
+    subtitle: "The 30-second overview — major phases only",
+    basic: true,
     aiPrompt:
       "Extract: the 5-7 major phases of this process as a high-level numbered flow.",
     fields: [
@@ -166,9 +166,9 @@ export const SECTIONS = {
   detailedSteps: {
     id: "detailedSteps",
     num: 5,
-    title: "Detailed Steps",
-    subtitle: "The full how-to",
-    free: true,
+    title: "Step-by-Step",
+    subtitle: "The full how-to — detailed enough that anyone could follow it",
+    basic: true,
     aiPrompt:
       "Extract: every step with what happens, tools/systems used, and time estimates.",
     fields: [
@@ -184,34 +184,34 @@ export const SECTIONS = {
     id: "decisions",
     num: 6,
     title: "Decisions & Escalation",
-    subtitle: "Where judgment calls live",
-    free: false,
+    subtitle: "Where the judgment calls live — so nobody's guessing",
+    basic: false,
     aiPrompt:
       "Extract: decisions that can be made independently, those needing approval, what to do if info is missing, and escalation contacts.",
     fields: [
       {
         key: "independentDecisions",
-        label: "Decisions that can be made independently",
+        label: "What can they decide on their own?",
         type: "textarea",
-        placeholder: "What can the executor decide on their own?",
+        placeholder: "Things the executor can handle without checking in...",
       },
       {
         key: "approvalRequired",
-        label: "Decisions that need approval",
+        label: "What needs a sign-off?",
         type: "textarea",
-        placeholder: "What needs sign-off, and from whom?",
+        placeholder: "Decisions that require your approval or someone else's...",
       },
       {
         key: "missingInfo",
-        label: "If information is missing...",
+        label: "If something's missing or unclear...",
         type: "textarea",
-        placeholder: "What should the executor do?",
+        placeholder: "What should they do when they hit a wall?",
       },
       {
         key: "escalationContact",
-        label: "Escalation contact",
+        label: "Who do they come to?",
         type: "text",
-        placeholder: "Who to contact if something goes wrong",
+        placeholder: "The person to contact when something goes sideways",
       },
     ],
   },
@@ -220,28 +220,28 @@ export const SECTIONS = {
     id: "doneRight",
     num: 7,
     title: "Done Right Checklist",
-    subtitle: "How you know it's complete",
-    free: false,
+    subtitle: "How you know it's actually finished — not just technically done",
+    basic: false,
     aiPrompt:
       "Extract: definition of done, quality checklist items, and common mistakes to avoid.",
     fields: [
       {
         key: "completionCriteria",
-        label: "Definition of done",
+        label: "This SOP is complete when...",
         type: "textarea",
-        placeholder: "This SOP is complete when...",
+        placeholder: "Be specific — what does truly done look like?",
       },
       {
         key: "qualityChecklist",
-        label: "Quality checklist",
+        label: "Quality checkpoints",
         type: "bulletlist",
-        placeholder: "Add a quality checkpoint...",
+        placeholder: "Add a checkpoint...",
       },
       {
         key: "commonMistakes",
-        label: "Common mistakes to avoid",
+        label: "Common mistakes to watch for",
         type: "bulletlist",
-        placeholder: "Add a common pitfall...",
+        placeholder: "Add something that tends to go wrong...",
       },
     ],
   },
@@ -250,8 +250,8 @@ export const SECTIONS = {
     id: "aiAutomation",
     num: 8,
     title: "AI & Automation",
-    subtitle: "Where technology supports the process",
-    free: false,
+    subtitle: "Where technology can support or speed up this process",
+    basic: false,
     aiPrompt:
       "Extract: where AI or automation could support this, guardrails, human review points, and connected tools.",
     fields: [
@@ -288,8 +288,8 @@ export const SECTIONS = {
     id: "evolution",
     num: 9,
     title: "Tracking & Evolution",
-    subtitle: "Keeping it alive",
-    free: false,
+    subtitle: "Keeping this SOP alive and improving over time",
+    basic: false,
     aiPrompt:
       "Extract: metrics to monitor, who reviews, how feedback is logged, and revision triggers.",
     fields: [
@@ -339,14 +339,10 @@ export const SECTION_ORDER = [
   "evolution",
 ];
 
-/**
- * Get only free sections
- */
-export const getFreeSections = () =>
-  SECTION_ORDER.filter((key) => SECTIONS[key].free);
+export const getBasicSections = () =>
+  SECTION_ORDER.filter((key) => SECTIONS[key].basic);
 
-/**
- * Get only pro sections
- */
-export const getProSections = () =>
-  SECTION_ORDER.filter((key) => !SECTIONS[key].free);
+export const getDetailedSections = () => SECTION_ORDER;
+
+export const getSectionsForType = (sopType) =>
+  sopType === "detailed" ? SECTION_ORDER : getBasicSections();

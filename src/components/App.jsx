@@ -1,11 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
-import { SECTION_ORDER } from "../lib/sections.js";
+import { SECTION_ORDER, getSectionsForType } from "../lib/sections.js";
 import { S } from "../styles/theme.js";
 import { typography } from "../styles/theme.js";
 
 import WelcomeScreen from "./WelcomeScreen.jsx";
 import Header from "./Header.jsx";
-import TierToggle from "./TierToggle.jsx";
 import SectionNav from "./SectionNav.jsx";
 import VideoImportPanel from "./VideoImportPanel.jsx";
 import AIReviewFlow from "./AIReviewFlow.jsx";
@@ -17,20 +16,19 @@ import ExportBar from "./ExportBar.jsx";
 const DEFAULT_BRAND = {
   logo: null,
   logoName: "",
-  primaryColor: "#1B3A4B",
-  accentColor: "#E8985E",
+  primaryColor: "#2D3526",
+  accentColor: "#C49A3C",
   businessName: "",
 };
 
 export default function App() {
   const [appStage, setAppStage] = useState("welcome");
-  const [isPro, setIsPro] = useState(false);
+  const [sopType, setSopType] = useState("basic");
   const [activeView, setActiveView] = useState("editor");
   const [activeSection, setActiveSection] = useState("overview");
   const [data, setData] = useState({});
   const [brand, setBrand] = useState({ ...DEFAULT_BRAND });
 
-  // AI review flow state
   const [aiMode, setAiMode] = useState(false);
   const [aiData, setAiData] = useState({});
   const [sectionStatuses, setSectionStatuses] = useState({});
@@ -42,6 +40,14 @@ export default function App() {
     document.head.appendChild(link);
   }, []);
 
+  const sectionKeys = getSectionsForType(sopType);
+
+  const handleStart = ({ businessName, sopType: type }) => {
+    setBrand(b => ({ ...b, businessName }));
+    setSopType(type);
+    setAppStage("editor");
+  };
+
   const handleFieldChange = useCallback((sectionId, key, value) => {
     if (aiMode) {
       setAiData(prev => ({ ...prev, [sectionId]: { ...prev[sectionId], [key]: value } }));
@@ -49,14 +55,6 @@ export default function App() {
       setData(prev => ({ ...prev, [sectionId]: { ...prev[sectionId], [key]: value } }));
     }
   }, [aiMode]);
-
-  const handleStart = ({ businessName, startMethod }) => {
-    setBrand(b => ({ ...b, businessName }));
-    setAppStage("editor");
-    if (startMethod === "video") {
-      setIsPro(true);
-    }
-  };
 
   const handleTranscriptReady = (parsed) => {
     setAiData(parsed);
@@ -83,6 +81,22 @@ export default function App() {
     setActiveSection("overview");
   };
 
+  const handleNextSection = () => {
+    const idx = sectionKeys.indexOf(activeSection);
+    if (idx < sectionKeys.length - 1) {
+      setActiveSection(sectionKeys[idx + 1]);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handlePrevSection = () => {
+    const idx = sectionKeys.indexOf(activeSection);
+    if (idx > 0) {
+      setActiveSection(sectionKeys[idx - 1]);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const currentData = aiMode ? aiData : data;
 
   if (appStage === "welcome") {
@@ -91,11 +105,7 @@ export default function App() {
 
   return (
     <div style={S.app}>
-      <Header businessName={brand.businessName} />
-
-      <div style={{ maxWidth: "720px", margin: "14px auto 0", padding: "0 16px" }}>
-        <TierToggle isPro={isPro} onToggle={() => setIsPro(p => !p)} />
-      </div>
+      <Header businessName={brand.businessName} sopType={sopType} onChangeSopType={setSopType} />
 
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "0 16px" }}>
         <div style={S.tabRow}>
@@ -105,21 +115,24 @@ export default function App() {
           <button style={S.tab(activeView === "preview")} onClick={() => setActiveView("preview")}>
             👁 Preview
           </button>
-          {isPro && (
-            <button style={S.tab(activeView === "brand")} onClick={() => setActiveView("brand")}>
-              🎨 Brand
-            </button>
-          )}
+          <button style={S.tab(activeView === "brand")} onClick={() => setActiveView("brand")}>
+            🎨 Brand
+          </button>
         </div>
       </div>
 
       {activeView === "editor" && !aiMode && (
-        <SectionNav activeSection={activeSection} isPro={isPro} onSelect={setActiveSection} />
+        <SectionNav
+          activeSection={activeSection}
+          sopType={sopType}
+          sectionKeys={sectionKeys}
+          onSelect={setActiveSection}
+        />
       )}
 
       <div style={S.main}>
         {activeView === "editor" && !aiMode && (
-          <VideoImportPanel onTranscriptReady={handleTranscriptReady} isPro={isPro} />
+          <VideoImportPanel onTranscriptReady={handleTranscriptReady} />
         )}
 
         {activeView === "editor" && aiMode && (
@@ -136,23 +149,25 @@ export default function App() {
         {activeView === "editor" && !aiMode && (
           <ManualEditor
             activeSection={activeSection}
+            sectionKeys={sectionKeys}
             data={data}
-            isPro={isPro}
+            sopType={sopType}
             onFieldChange={handleFieldChange}
-            onUnlockPro={() => setIsPro(true)}
+            onNext={handleNextSection}
+            onPrev={handlePrevSection}
           />
         )}
 
         {activeView === "preview" && (
-          <PreviewPanel data={currentData} brand={brand} isPro={isPro} />
+          <PreviewPanel data={currentData} brand={brand} sopType={sopType} />
         )}
 
-        {activeView === "brand" && isPro && (
+        {activeView === "brand" && (
           <BrandPanel brand={brand} setBrand={setBrand} />
         )}
       </div>
 
-      <ExportBar data={currentData} brand={brand} isPro={isPro} />
+      <ExportBar data={currentData} brand={brand} sopType={sopType} />
     </div>
   );
 }

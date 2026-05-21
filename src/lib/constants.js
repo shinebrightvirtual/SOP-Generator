@@ -1,49 +1,46 @@
-/**
- * Shine Bright SOP Generator — Design Tokens
- *
- * Central design system for colors, typography, spacing, and component styles.
- * All components should reference these tokens rather than hardcoding values.
- */
-
 export const colors = {
   // Brand
-  primary: "#1B3A4B",
-  primaryLight: "#2D5F73",
-  accent: "#E8985E",
-  accentDark: "#D4803E",
+  primary: "#2D3526",
+  primaryLight: "#3D4A30",
+  accent: "#C49A3C",
+  accentDark: "#A8832E",
+  rust: "#8B4F38",
+  sage: "#9BA98A",
+  warmGray: "#797870",
+  burgundy: "#4A2535",
 
   // Backgrounds
-  pageBg: "#F7F5F0",
+  pageBg: "#EAE8E2",
   cardBg: "#FFFFFF",
-  inputBg: "#FDFCFA",
-  lockedBg: "#FAFAF8",
-  warmBg: "#FFF9F3",
+  inputBg: "#F5F3EF",
+  lockedBg: "#F8F6F2",
+  warmBg: "#F2EFE8",
 
   // Borders
-  border: "#EDE9E3",
-  borderMuted: "#E0DBD3",
-  borderDashed: "#D4CFC7",
-  borderWarm: "#F0DCC8",
-  borderSuccess: "#C6F0D0",
+  border: "#DDD9D1",
+  borderMuted: "#D5D0C8",
+  borderDashed: "#C8C3BA",
+  borderWarm: "#D9CEB8",
+  borderSuccess: "#C3DDB8",
 
   // Text
-  textPrimary: "#2D2D2D",
-  textSecondary: "#5C5C5C",
-  textMuted: "#918B82",
-  textFaint: "#B5AFA6",
-  textLabel: "#3D3D3D",
-  textSubLabel: "#6B6560",
-  textDark: "#4A4A4A",
+  textPrimary: "#2D3526",
+  textSecondary: "#4A4A40",
+  textMuted: "#7A7870",
+  textFaint: "#A8A49C",
+  textLabel: "#3A3A30",
+  textSubLabel: "#6B6860",
+  textDark: "#2D3526",
 
   // Status
-  success: "#34A853",
-  successBg: "#E6F4EA",
-  successText: "#1E7F3F",
-  warning: "#E8985E",
-  danger: "#C85050",
-  dangerBg: "rgba(200,80,80,0.08)",
-  info: "#4A90D9",
-  pending: "#D4CFC7",
+  success: "#4A7C3F",
+  successBg: "#E8F0E4",
+  successText: "#2D5C24",
+  warning: "#C49A3C",
+  danger: "#8B3A2A",
+  dangerBg: "rgba(139,58,42,0.08)",
+  info: "#4A6D8C",
+  pending: "#C8C3BA",
 
   // Overlay
   white: "#FFFFFF",
@@ -111,7 +108,7 @@ export const gradients = {
   primary: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryLight})`,
   accent: `linear-gradient(135deg, ${colors.accent}, ${colors.accentDark})`,
   header: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primaryLight} 100%)`,
-  progress: `linear-gradient(90deg, ${colors.accent}, ${colors.success})`,
-  successBg: `linear-gradient(135deg, #F0FFF4 0%, #FFF 100%)`,
+  progress: `linear-gradient(90deg, ${colors.accent}, ${colors.sage})`,
+  successBg: `linear-gradient(135deg, #EEF4EA 0%, #FFF 100%)`,
   warmBg: `linear-gradient(135deg, ${colors.warmBg} 0%, #FFF 100%)`,
 };

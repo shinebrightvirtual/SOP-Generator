@@ -156,9 +156,9 @@ function buildSectionParagraphs(sec, sData, primaryColor, accentColor) {
 }
 
 export async function exportToDOCX(data, brand, isPro) {
-  const primaryColor = isPro ? brand.primaryColor : "#1B3A4B";
-  const accentColor = isPro ? brand.accentColor : "#E8985E";
-  const biz = isPro && brand.businessName ? brand.businessName : "";
+  const primaryColor = brand.primaryColor || "#2D3526";
+  const accentColor = brand.accentColor || "#C49A3C";
+  const biz = brand.businessName || "";
   const title = data.overview?.sopTitle || "Standard Operating Procedure";
   const pc = hexToDocxColor(primaryColor);
   const ac = hexToDocxColor(accentColor);
@@ -202,7 +202,7 @@ export async function exportToDOCX(data, brand, isPro) {
   }
 
   // Sections
-  const sectionsToShow = SECTION_ORDER.filter(k => SECTIONS[k].free || isPro);
+  const sectionsToShow = SECTION_ORDER.filter(k => SECTIONS[k].basic || isPro);
   for (const key of sectionsToShow) {
     const sec = SECTIONS[key];
     const sData = data[key] || {};
