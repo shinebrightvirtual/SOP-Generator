@@ -32,6 +32,9 @@ export default function App() {
   const [aiData, setAiData] = useState({});
   const [sectionStatuses, setSectionStatuses] = useState({});
 
+  // Hide our own header/branding bar when embedded in an iframe via ?embed=1
+  const isEmbedded = new URLSearchParams(window.location.search).get("embed") === "1";
+
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
@@ -102,13 +105,14 @@ export default function App() {
       <WelcomeScreen
         onStart={handleStart}
         onTranscriptReady={handleTranscriptReady}
+        isEmbedded={isEmbedded}
       />
     );
   }
 
   return (
     <div style={S.app}>
-      <Header businessName={brand.businessName} sopType={sopType} onChangeSopType={setSopType} />
+      {!isEmbedded && <Header businessName={brand.businessName} sopType={sopType} onChangeSopType={setSopType} />}
 
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "20px 16px 0" }}>
         <div style={{ ...S.tabRow, justifyContent: "center", marginBottom: "24px" }}>
