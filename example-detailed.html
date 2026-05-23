@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Client Onboarding — Bloom &amp; Co. Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #333;
+      background: #f5f5f0;
+      padding: 40px 20px;
+    }
+
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 60px 64px;
+      border-radius: 4px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    }
+
+    /* ── Header ── */
+    .doc-header {
+      margin-bottom: 36px;
+    }
+
+    .business-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #C49A3C;
+      margin-bottom: 10px;
+    }
+
+    .doc-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #2D3526;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .doc-meta {
+      font-style: italic;
+      color: #888;
+      font-size: 13px;
+    }
+
+    .header-rule {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin-top: 28px;
+    }
+
+    /* ── Sections ── */
+    .section {
+      margin-top: 40px;
+    }
+
+    .section-heading {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #2D3526;
+      margin-bottom: 8px;
+    }
+
+    .section-rule {
+      border: none;
+      border-top: 1.5px solid #C49A3C;
+      margin-bottom: 20px;
+    }
+
+    .section p {
+      color: #333;
+      margin-bottom: 14px;
+    }
+
+    .section p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ── Overview grid ── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 32px;
+    }
+
+    .overview-item {
+      border-left: 3px solid #C49A3C;
+      padding-left: 12px;
+    }
+
+    .overview-item-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 2px;
+    }
+
+    .overview-item-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #2D3526;
+    }
+
+    /* ── Numbered list (flowSteps) ── */
+    ol.flow-steps {
+      list-style: none;
+      counter-reset: flow-counter;
+      padding: 0;
+    }
+
+    ol.flow-steps li {
+      counter-increment: flow-counter;
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+    }
+
+    ol.flow-steps li:last-child {
+      border-bottom: none;
+    }
+
+    ol.flow-steps li::before {
+      content: counter(flow-counter);
+      min-width: 24px;
+      height: 24px;
+      background: #2D3526;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Detailed steps ── */
+    .step-block {
+      border-left: 3px solid #2D3526;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      background: #fafaf8;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .step-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #C49A3C;
+      margin-bottom: 6px;
+    }
+
+    .step-what {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .step-meta {
+      display: flex;
+      gap: 24px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .step-meta-item strong {
+      color: #2D3526;
+      font-weight: 700;
+    }
+
+    /* ── Bullet list (qualityChecklist) ── */
+    ul.quality-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul.quality-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+    }
+
+    ul.quality-list li:last-child {
+      border-bottom: none;
+    }
+
+    ul.quality-list li::before {
+      content: '';
+      min-width: 7px;
+      height: 7px;
+      background: #C49A3C;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .page { box-shadow: none; padding: 40px 48px; max-width: 100%; border-radius: 0; }
+      .section { page-break-inside: avoid; }
+    }
+
+    @page { size: A4; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <header class="doc-header">
+      <span class="business-label">Bloom &amp; Co. Studio</span>
+      <h1 class="doc-title">New Client Onboarding</h1>
+      <p class="doc-meta">Created by Sarah Bloom &nbsp;&middot;&nbsp; Version: 1 May 2026 &nbsp;&middot;&nbsp; Next review: 1 Nov 2026</p>
+      <hr class="header-rule" />
+    </header>
+
+    <!-- Section 1: Overview -->
+    <section class="section">
+      <h2 class="section-heading">1 &mdash; Overview</h2>
+      <hr class="section-rule" />
+      <div class="overview-grid">
+        <div class="overview-item">
+          <div class="overview-item-label">Category</div>
+          <div class="overview-item-value">Client Experience</div>
+        </div>
+        <div class="overview-item">
+          <div class="overview-item-label">Owner</div>
+          <div class="overview-item-value">Sarah</div>
+        </div>
+        <div class="overview-item">
+          <div class="overview-item-label">Executor</div>
+          <div class="overview-item-value">VA</div>
+        </div>
+        <div class="overview-item">
+          <div class="overview-item-label">Frequency</div>
+          <div class="overview-item-value">Triggered by event</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Why It Matters -->
+    <section class="section">
+      <h2 class="section-heading">2 &mdash; Why It Matters</h2>
+      <hr class="section-rule" />
+      <p>Before we had this process, new clients would fall through the cracks — welcome emails would go out late, folders wouldn't get set up, and sometimes clients would show up to their first call without any of the prep materials. It felt chaotic and unprofessional for a studio that prides itself on client experience.</p>
+      <p>Every new client gets a warm, organised welcome within 24 hours of signing. Their folders are ready, their first call is booked, and they feel genuinely taken care of from day one.</p>
+      <p>Clients notice when things feel rushed or disjointed right at the start. First impressions set the tone for the whole working relationship — if onboarding feels scattered, it shakes their confidence in us before the work has even begun.</p>
+    </section>
+
+    <!-- Section 3: When & How It Runs -->
+    <section class="section">
+      <h2 class="section-heading">3 &mdash; When &amp; How It Runs</h2>
+      <hr class="section-rule" />
+      <p>A new client signs their contract and pays their deposit. We get an automated notification from HoneyBook when both are complete.</p>
+      <p>The client has received their welcome email, their project folder is fully set up in Google Drive, their intake form is submitted, and their first call is confirmed on the calendar.</p>
+      <p>The proposal and contract need to be fully signed and the deposit collected before we start. We also need their contact details and project brief in HoneyBook.</p>
+      <p>Project kick-off can't happen until onboarding is done. The project management setup in ClickUp and the first deliverable timeline both depend on the intake form being completed.</p>
+    </section>
+
+    <!-- Section 4: The Overview (flow steps) -->
+    <section class="section">
+      <h2 class="section-heading">4 &mdash; The Overview</h2>
+      <hr class="section-rule" />
+      <ol class="flow-steps">
+        <li>Confirm contract and deposit</li>
+        <li>Set up client folder in Google Drive</li>
+        <li>Send welcome email with intake form</li>
+        <li>Set up project in ClickUp</li>
+        <li>Book kick-off call</li>
+        <li>Run kick-off call</li>
+      </ol>
+    </section>
+
+    <!-- Section 5: Step by Step -->
+    <section class="section">
+      <h2 class="section-heading">5 &mdash; Step by Step</h2>
+      <hr class="section-rule" />
+
+      <div class="step-block">
+        <div class="step-label">Step 1</div>
+        <p class="step-what">Check HoneyBook for the signed contract and deposit confirmation. If both are marked complete, move the lead to the 'Active Client' pipeline stage.</p>
+        <div class="step-meta">
+          <span class="step-meta-item"><strong>Tools:</strong> HoneyBook</span>
+          <span class="step-meta-item"><strong>Time:</strong> 5 min</span>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-label">Step 2</div>
+        <p class="step-what">Duplicate the 'Client Template' folder in Google Drive and rename it with the client name and project year. Move it into the correct service folder. Share with the client and give them comment access to the shared deliverables subfolder only.</p>
+        <div class="step-meta">
+          <span class="step-meta-item"><strong>Tools:</strong> Google Drive</span>
+          <span class="step-meta-item"><strong>Time:</strong> 10 min</span>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-label">Step 3</div>
+        <p class="step-what">Send the welcome email using the template in HoneyBook. Personalise the first two lines with the client's name and what they've booked. Attach the intake form link. BCC the studio inbox.</p>
+        <div class="step-meta">
+          <span class="step-meta-item"><strong>Tools:</strong> HoneyBook, Gmail</span>
+          <span class="step-meta-item"><strong>Time:</strong> 10 min</span>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-label">Step 4</div>
+        <p class="step-what">Create a new project in ClickUp using the onboarding template for the relevant service. Set the start date to today and the target completion date based on the project scope. Assign yourself and any team members.</p>
+        <div class="step-meta">
+          <span class="step-meta-item"><strong>Tools:</strong> ClickUp</span>
+          <span class="step-meta-item"><strong>Time:</strong> 10 min</span>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-label">Step 5</div>
+        <p class="step-what">Send the Calendly scheduling link to the client via email so they can pick their kick-off call time. Once they book, add any prep notes to the calendar event.</p>
+        <div class="step-meta">
+          <span class="step-meta-item"><strong>Tools:</strong> Calendly, Google Calendar</span>
+          <span class="step-meta-item"><strong>Time:</strong> 5 min</span>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-label">Step 6</div>
+        <p class="step-what">Run the kick-off call using the call guide doc in the client's Google Drive folder. Take notes directly in the doc. Record the call if the client has consented. Send a follow-up summary within 2 hours.</p>
+        <div class="step-meta">
+          <span class="step-meta-item"><strong>Tools:</strong> Zoom, Google Docs</span>
+          <span class="step-meta-item"><strong>Time:</strong> 60 min</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Section 6: Decisions -->
+    <section class="section">
+      <h2 class="section-heading">6 &mdash; Decisions</h2>
+      <hr class="section-rule" />
+      <p>The VA can decide on folder naming, ClickUp task assignments within the project, and send the welcome email without checking in. If the client hasn't completed their intake form within 3 days, send one gentle follow-up independently.</p>
+      <p>Any changes to the project scope, timeline, or deliverables discussed on the kick-off call need to come to Sarah before being confirmed with the client. If the deposit hasn't cleared, hold off on the full setup until Sarah gives the go-ahead.</p>
+      <p>If the contract is signed but deposit hasn't come through yet, flag it to Sarah and hold off on sending the welcome email. If the client's brief is missing key details, note it and raise it on the kick-off call rather than delaying the setup.</p>
+      <p>Sarah &mdash; via Slack or text if urgent</p>
+    </section>
+
+    <!-- Section 7: Getting It Right -->
+    <section class="section">
+      <h2 class="section-heading">7 &mdash; Getting It Right</h2>
+      <hr class="section-rule" />
+      <ul class="quality-list">
+        <li>Contract signed and deposit confirmed in HoneyBook</li>
+        <li>Client folder set up and shared with correct permissions</li>
+        <li>Welcome email sent and personalised</li>
+        <li>Intake form link included in welcome email</li>
+        <li>ClickUp project created with correct template</li>
+        <li>Kick-off call booked and confirmed</li>
+        <li>Call summary sent within 2 hours of kick-off</li>
+      </ul>
+    </section>
+
+    <!-- Section 8: Tools & Automation -->
+    <section class="section">
+      <h2 class="section-heading">8 &mdash; Tools &amp; Automation</h2>
+      <hr class="section-rule" />
+      <p>HoneyBook sends an automated notification when a contract is signed and deposit paid. Calendly handles scheduling and sends reminders automatically. We use a ChatGPT-drafted template for the kick-off call summary, which the VA reviews and personalises before sending.</p>
+      <p>The welcome email must always be personalised — never sent as a straight template copy. The kick-off summary needs a human read-through before it goes to the client. Nothing client-facing should be sent without a final check.</p>
+      <p>HoneyBook, Calendly, ClickUp, ChatGPT, Google Drive</p>
+    </section>
+
+    <!-- Section 9: Keeping It Current -->
+    <section class="section">
+      <h2 class="section-heading">9 &mdash; Keeping It Current</h2>
+      <hr class="section-rule" />
+      <p>We track how long onboarding takes end-to-end (target: under 24 hours), whether clients show up to their kick-off call prepared, and whether any steps get flagged as missed in ClickUp. If clients are coming to the call without filling in the intake form, something's off.</p>
+      <p>VA flags anything that feels unclear or outdated in our weekly Slack check-in. Clients can flag issues directly via email — Sarah monitors this.</p>
+      <p>A tool change (e.g., switching from HoneyBook to a different CRM), a new service type being added, or two or more clients in a row having a confusing onboarding experience.</p>
+      <p>Reviewer: Sarah &nbsp;&middot;&nbsp; Review frequency: Every 6 months</p>
+    </section>
+
+  </div>
+</body>
+</html>
