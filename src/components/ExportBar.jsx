@@ -4,6 +4,11 @@ import { exportToPDF } from "../lib/export-pdf.js";
 import { exportToDOCX } from "../lib/export-docx.js";
 import { getSectionsForType, SECTIONS } from "../lib/sections.js";
 
+// Sections that get converted to prose paragraphs by the AI
+const PARAGRAPH_SECTIONS = new Set([
+  "whyItMatters", "triggers", "decisions", "doneRight", "aiAutomation", "evolution",
+]);
+
 async function polishData(data, sectionKeys) {
   try {
     const res = await fetch("/api/polish-sop", {
@@ -31,7 +36,10 @@ function filledSections(data, sectionKeys) {
 export default function ExportBar({ data, brand, setBrand, sopType }) {
   const [status, setStatus] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showReview, setShowReview] = useState(false);
   const [pendingFormat, setPendingFormat] = useState(null);
+  const [reviewParagraphs, setReviewParagraphs] = useState({});
+  const [reviewData, setReviewData] = useState(null);
   const logoRef = useRef(null);
 
   const handleLogoUpload = (e) => {
@@ -50,16 +58,26 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
     setShowConfirm(true);
   };
 
+  // Step 1: branding confirmed → run AI polish → open review
   const handleConfirmExport = async () => {
     setShowConfirm(false);
     setStatus("polishing");
     const { data: polished, paragraphs } = await polishData(data, sectionKeys);
+    setStatus(null);
+    setReviewData(polished);
+    setReviewParagraphs(paragraphs);
+    setShowReview(true);
+  };
+
+  // Step 2: review confirmed → generate file
+  const handleDownload = async () => {
+    setShowReview(false);
     setStatus("generating");
     try {
       if (pendingFormat === "pdf") {
-        await exportToPDF(polished, brand, isPro, paragraphs);
+        await exportToPDF(reviewData, brand, isPro, reviewParagraphs);
       } else if (pendingFormat === "docx") {
-        await exportToDOCX(polished, brand, isPro, paragraphs);
+        await exportToDOCX(reviewData, brand, isPro, reviewParagraphs);
       }
     } catch (err) {
       console.error(`Export error (${pendingFormat}):`, err);
@@ -91,9 +109,14 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
   const filled = filledSections(data, sectionKeys);
   const empty = sectionKeys.filter(k => !filled.includes(k));
 
+  // Sections that have reviewable paragraphs
+  const reviewableSections = sectionKeys.filter(k =>
+    PARAGRAPH_SECTIONS.has(k) && reviewParagraphs[k]
+  );
+
   return (
     <>
-      {/* Confirmation modal */}
+      {/* Step 1: Branding / details confirmation modal */}
       {showConfirm && (
         <div style={{
           position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 500,
@@ -144,7 +167,6 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
                 Your branding
               </div>
 
-              {/* Logo */}
               <div style={{ marginBottom: "10px" }}>
                 <label style={{ ...S.label, marginBottom: "4px" }}>Logo</label>
                 <input type="file" ref={logoRef} accept="image/*" style={{ display: "none" }} onChange={handleLogoUpload} />
@@ -163,7 +185,6 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
                 </div>
               </div>
 
-              {/* Colors */}
               <div style={{ display: "flex", gap: "10px" }}>
                 <div style={{ flex: 1 }}>
                   <label style={{ ...S.label, marginBottom: "4px" }}>Primary color</label>
@@ -182,7 +203,6 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
               </div>
             </div>
 
-            {/* Section status */}
             {empty.length > 0 && (
               <div style={{ background: "#FFF8F0", border: `1px solid ${colors.borderWarm}`, borderRadius: radii.lg, padding: "12px 14px", marginBottom: "16px" }}>
                 <div style={{ fontSize: typography.sizes.body2, fontWeight: typography.weights.semibold, color: colors.accentDark, marginBottom: "4px" }}>
@@ -205,7 +225,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
                   fontWeight: typography.weights.medium, cursor: "pointer", fontFamily: typography.fontFamily,
                 }}
               >
-                Go back and review
+                Go back
               </button>
               <button
                 onClick={handleConfirmExport}
@@ -215,7 +235,93 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
                   fontWeight: typography.weights.semibold, cursor: "pointer", fontFamily: typography.fontFamily,
                 }}
               >
-                Looks good, export
+                Polish my SOP
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Review & edit polished paragraphs */}
+      {showReview && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 500,
+          display: "flex", alignItems: "stretch", justifyContent: "flex-end",
+        }}>
+          <div style={{
+            background: colors.white, width: "100%", maxWidth: "560px",
+            display: "flex", flexDirection: "column", boxShadow: "-8px 0 40px rgba(0,0,0,0.15)",
+          }}>
+            {/* Header */}
+            <div style={{ padding: "22px 24px 16px", borderBottom: `1px solid ${colors.border}`, flexShrink: 0 }}>
+              <h3 style={{ margin: "0 0 4px", fontSize: "17px", fontWeight: typography.weights.bold, color: colors.primary, fontFamily: typography.fontFamily }}>
+                Review your SOP
+              </h3>
+              <p style={{ margin: 0, fontSize: typography.sizes.body, color: colors.textMuted, lineHeight: 1.5, fontFamily: typography.fontFamily }}>
+                AI has written these sections in paragraph form. Edit anything that doesn't sound right before downloading.
+              </p>
+            </div>
+
+            {/* Editable sections */}
+            <div style={{ flex: 1, overflowY: "auto", padding: "20px 24px" }}>
+              {reviewableSections.length === 0 ? (
+                <p style={{ color: colors.textMuted, fontSize: typography.sizes.body }}>
+                  Nothing to review — your SOP is ready to download.
+                </p>
+              ) : (
+                reviewableSections.map(key => (
+                  <div key={key} style={{ marginBottom: "24px" }}>
+                    <div style={{
+                      fontSize: typography.sizes.body2, fontWeight: typography.weights.bold,
+                      color: colors.primary, textTransform: "uppercase", letterSpacing: "0.7px",
+                      marginBottom: "8px", paddingBottom: "5px",
+                      borderBottom: `1.5px solid ${colors.accentColor || colors.accent}`,
+                    }}>
+                      {SECTIONS[key].num}. {SECTIONS[key].title}
+                    </div>
+                    <textarea
+                      value={reviewParagraphs[key] || ""}
+                      onChange={e => setReviewParagraphs(p => ({ ...p, [key]: e.target.value }))}
+                      rows={5}
+                      style={{
+                        width: "100%", boxSizing: "border-box",
+                        padding: "10px 12px", borderRadius: radii.lg,
+                        border: `1.5px solid ${colors.border}`,
+                        background: colors.inputBg, fontSize: typography.sizes.body,
+                        fontFamily: typography.fontFamily, color: colors.textPrimary,
+                        lineHeight: 1.6, resize: "vertical", outline: "none",
+                      }}
+                    />
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Footer */}
+            <div style={{
+              padding: "16px 24px", borderTop: `1px solid ${colors.border}`,
+              display: "flex", gap: "10px", flexShrink: 0,
+              background: colors.white,
+            }}>
+              <button
+                onClick={() => { setShowReview(false); setShowConfirm(true); }}
+                style={{
+                  flex: 1, padding: "11px", borderRadius: radii.lg, border: `1.5px solid ${colors.border}`,
+                  background: "transparent", color: colors.textSecondary, fontSize: typography.sizes.body,
+                  fontWeight: typography.weights.medium, cursor: "pointer", fontFamily: typography.fontFamily,
+                }}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleDownload}
+                style={{
+                  flex: 2, padding: "11px", borderRadius: radii.lg, border: "none",
+                  background: gradients.primary, color: colors.white, fontSize: typography.sizes.body,
+                  fontWeight: typography.weights.semibold, cursor: "pointer", fontFamily: typography.fontFamily,
+                }}
+              >
+                Download {pendingFormat === "pdf" ? "PDF" : "Word doc"}
               </button>
             </div>
           </div>
