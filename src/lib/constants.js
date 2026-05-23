@@ -54,9 +54,9 @@ export const colors = {
 };
 
 export const typography = {
-  fontFamily: "'DM Sans', sans-serif",
+  fontFamily: "'Lato', sans-serif",
   fontUrl:
-    "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap",
   sizes: {
     xs: "9px",
     sm: "10px",

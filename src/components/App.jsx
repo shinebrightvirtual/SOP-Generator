@@ -111,8 +111,8 @@ export default function App() {
     <div style={S.app}>
       <Header businessName={brand.businessName} sopType={sopType} onChangeSopType={setSopType} />
 
-      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "0 16px" }}>
-        <div style={{ ...S.tabRow, justifyContent: "center" }}>
+      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "20px 16px 0" }}>
+        <div style={{ ...S.tabRow, justifyContent: "center", marginBottom: "24px" }}>
           <button style={S.tab(activeView === "editor")} onClick={() => setActiveView("editor")}>
             {aiMode ? "Review" : "Editor"}
           </button>
