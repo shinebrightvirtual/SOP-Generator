@@ -36,16 +36,22 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
     width: "100%",
   });
 
+  const [transcript, setTranscript] = useState("");
+
   const handleTranscriptUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    const text = await file.text();
+    setTranscript(text);
+    e.target.value = "";
+  };
+
+  const handleBuildFromTranscript = async () => {
+    if (!transcript.trim()) return;
     setUploadError("");
     setProcessing(true);
-    setProcessStatus("Reading your transcript...");
+    setProcessStatus("Building your SOP draft...");
     try {
-      const transcript = await file.text();
-      if (!transcript.trim()) throw new Error("The file appears to be empty.");
-      setProcessStatus("Building your SOP draft...");
       const parsed = await extractSOPFromTranscript(transcript);
       setProcessStatus("Done! Loading your draft...");
       await new Promise(r => setTimeout(r, 400));
@@ -166,13 +172,13 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
             </div>
           </div>
 
-          {/* Transcript upload */}
+          {/* Transcript paste */}
           <div style={{ ...cardStyle, background: gradients.warmBg, border: `1.5px solid ${colors.borderWarm}` }}>
             <div style={{ fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "6px" }}>
               Already have a transcript or notes?
             </div>
             <div style={{ fontSize: "13px", color: colors.textMuted, marginBottom: "14px", lineHeight: 1.6 }}>
-              Upload a plain text file of a transcript, meeting notes, or a brain dump — AI will turn it into a draft SOP for you to review.
+              Paste a transcript, meeting notes, or a rough write-up — AI will turn it into a draft SOP for you to review.
             </div>
 
             {uploadError && (
@@ -189,15 +195,47 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
               </div>
             ) : (
               <>
-                <input type="file" ref={fileRef} accept=".txt,.md,.doc,.docx,text/plain" style={{ display: "none" }} onChange={handleTranscriptUpload} />
-                <button
-                  style={{ ...S.uploadVideoBtn, width: "100%", justifyContent: "center" }}
-                  onClick={() => fileRef.current?.click()}
-                >
-                  Upload a text file
-                </button>
-                <div style={{ fontSize: "11px", color: colors.textFaint, marginTop: "8px", textAlign: "center" }}>
-                  .txt or .md — paste your transcript, notes, or a rough write-up
+                <textarea
+                  value={transcript}
+                  onChange={e => { setTranscript(e.target.value); setUploadError(""); }}
+                  placeholder="Paste your transcript or notes here..."
+                  rows={5}
+                  style={{
+                    width: "100%", boxSizing: "border-box", padding: "10px 12px",
+                    borderRadius: radii.lg, border: `1.5px solid ${colors.border}`,
+                    background: colors.white, fontSize: typography.sizes.body,
+                    fontFamily: typography.fontFamily, color: colors.textPrimary,
+                    lineHeight: 1.6, resize: "vertical", outline: "none",
+                    marginBottom: "10px",
+                  }}
+                />
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <button
+                    onClick={handleBuildFromTranscript}
+                    disabled={!transcript.trim()}
+                    style={{
+                      flex: 1, padding: "10px", borderRadius: radii.lg, border: "none",
+                      background: transcript.trim() ? gradients.primary : colors.border,
+                      color: transcript.trim() ? colors.white : colors.textFaint,
+                      fontSize: typography.sizes.body, fontWeight: typography.weights.semibold,
+                      cursor: transcript.trim() ? "pointer" : "default",
+                      fontFamily: typography.fontFamily, transition: "all 0.15s",
+                    }}
+                  >
+                    Build my SOP draft
+                  </button>
+                  <input type="file" ref={fileRef} accept=".txt,.md,text/plain" style={{ display: "none" }} onChange={handleTranscriptUpload} />
+                  <button
+                    onClick={() => fileRef.current?.click()}
+                    style={{
+                      padding: "10px 14px", borderRadius: radii.lg,
+                      border: `1.5px solid ${colors.border}`, background: "transparent",
+                      color: colors.textMuted, fontSize: typography.sizes.body2,
+                      cursor: "pointer", fontFamily: typography.fontFamily, whiteSpace: "nowrap",
+                    }}
+                  >
+                    Upload .txt
+                  </button>
                 </div>
               </>
             )}
