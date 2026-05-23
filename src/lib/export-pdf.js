@@ -182,7 +182,7 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
         const ratio = dims.w / dims.h;
         let lh = maxH, lw = lh * ratio;
         if (lw > maxW) { lw = maxW; lh = lw / ratio; }
-        doc.addImage(brand.logo, "AUTO", ML, y, lw, lh);
+        doc.addImage(brand.logo, "AUTO", ML + (CW - lw) / 2, y, lw, lh);
         y += lh + 6;
       }
     } catch {}

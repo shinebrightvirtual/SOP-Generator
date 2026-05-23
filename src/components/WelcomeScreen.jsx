@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { colors, typography, radii, shadows, gradients } from "../lib/constants.js";
 import { S } from "../styles/theme.js";
 import { extractSOPFromTranscript } from "../lib/ai-extract.js";
-import { transcribeVideoFile } from "../lib/transcribe.js";
 import { EXAMPLE_DATA, EXAMPLE_BRAND } from "../lib/example-data.js";
 import PreviewPanel from "./PreviewPanel.jsx";
 
@@ -11,7 +10,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
   const [processing, setProcessing] = useState(false);
   const [processStatus, setProcessStatus] = useState("");
   const [uploadError, setUploadError] = useState("");
-  const [exampleType, setExampleType] = useState(null); // "basic" | "detailed"
+  const [exampleType, setExampleType] = useState(null);
   const fileRef = useRef(null);
 
   const canContinue = sopType !== null && !processing;
@@ -37,23 +36,24 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
     width: "100%",
   });
 
-  const handleFileUpload = async (e) => {
+  const handleTranscriptUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setUploadError("");
     setProcessing(true);
-    setProcessStatus("Transcribing your recording — this may take a minute or two depending on the length...");
+    setProcessStatus("Reading your transcript...");
     try {
-      const transcript = await transcribeVideoFile(file);
+      const transcript = await file.text();
+      if (!transcript.trim()) throw new Error("The file appears to be empty.");
       setProcessStatus("Building your SOP draft...");
       const parsed = await extractSOPFromTranscript(transcript);
       setProcessStatus("Done! Loading your draft...");
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 400));
       const type = sopType || "basic";
       onStart({ sopType: type });
       onTranscriptReady(parsed);
     } catch (err) {
-      setUploadError(err.message || "Could not process the recording. Please try again.");
+      setUploadError(err.message || "Could not process the transcript. Please try again.");
       setProcessing(false);
       setProcessStatus("");
     }
@@ -166,13 +166,13 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
             </div>
           </div>
 
-          {/* Video upload */}
+          {/* Transcript upload */}
           <div style={{ ...cardStyle, background: gradients.warmBg, border: `1.5px solid ${colors.borderWarm}` }}>
             <div style={{ fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "6px" }}>
-              Have a recording of yourself doing this?
+              Already have a transcript or notes?
             </div>
             <div style={{ fontSize: "13px", color: colors.textMuted, marginBottom: "14px", lineHeight: 1.6 }}>
-              Upload a downloaded video of you walking through the process — we'll use AI to draft your SOP automatically. You'll review everything before it's final.
+              Upload a plain text file of a transcript, meeting notes, or a brain dump — AI will turn it into a draft SOP for you to review.
             </div>
 
             {uploadError && (
@@ -189,15 +189,15 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
               </div>
             ) : (
               <>
-                <input type="file" ref={fileRef} accept="video/*" style={{ display: "none" }} onChange={handleFileUpload} />
+                <input type="file" ref={fileRef} accept=".txt,.md,.doc,.docx,text/plain" style={{ display: "none" }} onChange={handleTranscriptUpload} />
                 <button
                   style={{ ...S.uploadVideoBtn, width: "100%", justifyContent: "center" }}
                   onClick={() => fileRef.current?.click()}
                 >
-                  Upload a video file
+                  Upload a text file
                 </button>
                 <div style={{ fontSize: "11px", color: colors.textFaint, marginTop: "8px", textAlign: "center" }}>
-                  MP4, MOV, or similar — downloaded recordings only, not links
+                  .txt or .md — paste your transcript, notes, or a rough write-up
                 </div>
               </>
             )}

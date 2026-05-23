@@ -91,6 +91,7 @@ export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
         children.push(
           new Paragraph({
             children: [new ImageRun({ data: bytes, transformation: { width: Math.round(lw), height: Math.round(lh) } })],
+            alignment: AlignmentType.CENTER,
             spacing: sp(0, 160),
           })
         );
