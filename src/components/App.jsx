@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { SECTION_ORDER, getSectionsForType } from "../lib/sections.js";
 import { S } from "../styles/theme.js";
 import { typography } from "../styles/theme.js";
@@ -41,6 +41,19 @@ export default function App() {
     link.href = typography.fontUrl;
     document.head.appendChild(link);
   }, []);
+
+  // When embedded, send height updates to the parent so the iframe auto-resizes
+  useEffect(() => {
+    if (!isEmbedded) return;
+    const sendHeight = () => {
+      const h = document.documentElement.scrollHeight;
+      window.parent.postMessage({ type: "sb-sop-height", height: h }, "*");
+    };
+    sendHeight();
+    const ro = new ResizeObserver(sendHeight);
+    ro.observe(document.body);
+    return () => ro.disconnect();
+  }, [isEmbedded, appStage, activeView]);
 
   const sectionKeys = getSectionsForType(sopType);
 
@@ -111,7 +124,7 @@ export default function App() {
   }
 
   return (
-    <div style={S.app}>
+    <div style={{ ...S.app, background: isEmbedded ? "transparent" : S.app.background }}>
       {!isEmbedded && <Header businessName={brand.businessName} sopType={sopType} onChangeSopType={setSopType} />}
 
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "20px 16px 0" }}>
