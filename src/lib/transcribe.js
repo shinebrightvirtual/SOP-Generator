@@ -68,10 +68,9 @@ export async function fetchLoomTranscript(loomUrl) {
  * @returns {string} — the transcript text
  */
 export async function transcribeVideoFile(videoFile) {
-  // Validate file
-  const maxSize = 500 * 1024 * 1024; // 500MB
+  const maxSize = 90 * 1024 * 1024; // 90MB — safe under Vercel Pro 100MB limit
   if (videoFile.size > maxSize) {
-    throw new Error("Video file is too large. Maximum size is 500MB.");
+    throw new Error("Video file is too large (max 90MB). Try trimming it down or exporting a shorter clip.");
   }
 
   const validTypes = [
@@ -87,13 +86,11 @@ export async function transcribeVideoFile(videoFile) {
     );
   }
 
-  // Upload to serverless function
-  const formData = new FormData();
-  formData.append("video", videoFile);
-
+  // Send raw bytes — Deepgram expects the video file directly, not multipart form data
   const response = await fetch("/api/transcribe-video", {
     method: "POST",
-    body: formData,
+    headers: { "Content-Type": videoFile.type },
+    body: videoFile,
   });
 
   if (response.status === 503) {
