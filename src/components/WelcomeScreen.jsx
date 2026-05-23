@@ -4,9 +4,7 @@ import { S } from "../styles/theme.js";
 import { extractSOPFromTranscript } from "../lib/ai-extract.js";
 import { transcribeVideoFile } from "../lib/transcribe.js";
 
-export default function WelcomeScreen({ onStart, onTranscriptReady, initialBusinessName }) {
-  const [createdBy, setCreatedBy] = useState("");
-  const [businessName, setBusinessName] = useState(initialBusinessName || "");
+export default function WelcomeScreen({ onStart, onTranscriptReady }) {
   const [sopType, setSopType] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [processStatus, setProcessStatus] = useState("");
@@ -49,7 +47,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, initialBusin
       setProcessStatus("Done! Loading your draft...");
       await new Promise(r => setTimeout(r, 500));
       const type = sopType || "basic";
-      onStart({ businessName, createdBy, sopType: type });
+      onStart({ sopType: type });
       onTranscriptReady(parsed);
     } catch (err) {
       setUploadError(err.message || "Could not process the recording. Please try again.");
@@ -85,33 +83,6 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, initialBusin
               Just answer a few questions about how you do it —<br />
               we'll turn it into a proper SOP.
             </p>
-          </div>
-
-          {/* Your name */}
-          <div style={cardStyle}>
-            <label style={{ display: "block", fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "10px" }}>
-              What is your name?
-            </label>
-            <input
-              style={{ ...S.input, fontSize: "15px", padding: "11px 14px" }}
-              placeholder="e.g., Jess McKnight"
-              value={createdBy}
-              onChange={e => setCreatedBy(e.target.value)}
-              autoFocus
-            />
-          </div>
-
-          {/* Business name */}
-          <div style={cardStyle}>
-            <label style={{ display: "block", fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "10px" }}>
-              What is the name of your business?
-            </label>
-            <input
-              style={{ ...S.input, fontSize: "15px", padding: "11px 14px" }}
-              placeholder="e.g., Shine Bright Virtual"
-              value={businessName}
-              onChange={e => setBusinessName(e.target.value)}
-            />
           </div>
 
           {/* SOP type */}
@@ -187,7 +158,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, initialBusin
 
           {/* CTA */}
           <button
-            onClick={() => canContinue && onStart({ businessName, createdBy, sopType })}
+            onClick={() => canContinue && onStart({ sopType })}
             disabled={!canContinue}
             style={{
               width: "100%", padding: "15px", borderRadius: "12px", border: "none",

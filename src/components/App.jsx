@@ -42,8 +42,7 @@ export default function App() {
 
   const sectionKeys = getSectionsForType(sopType);
 
-  const handleStart = ({ businessName, createdBy, sopType: type }) => {
-    setBrand(b => ({ ...b, businessName, createdBy }));
+  const handleStart = ({ sopType: type }) => {
     setSopType(type);
     setAppStage("editor");
   };
@@ -104,7 +103,6 @@ export default function App() {
       <WelcomeScreen
         onStart={handleStart}
         onTranscriptReady={handleTranscriptReady}
-        initialBusinessName={brand.businessName}
       />
     );
   }
@@ -169,7 +167,7 @@ export default function App() {
         )}
       </div>
 
-      <ExportBar data={currentData} brand={brand} sopType={sopType} />
+      <ExportBar data={currentData} brand={brand} setBrand={setBrand} sopType={sopType} />
     </div>
   );
 }

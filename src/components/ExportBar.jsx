@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { S, colors, typography, radii, gradients } from "../styles/theme.js";
 import { exportToPDF } from "../lib/export-pdf.js";
 import { exportToDOCX } from "../lib/export-docx.js";
@@ -28,10 +28,19 @@ function filledSections(data, sectionKeys) {
   });
 }
 
-export default function ExportBar({ data, brand, sopType }) {
+export default function ExportBar({ data, brand, setBrand, sopType }) {
   const [status, setStatus] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingFormat, setPendingFormat] = useState(null);
+  const logoRef = useRef(null);
+
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setBrand(b => ({ ...b, logo: ev.target.result, logoName: file.name }));
+    reader.readAsDataURL(file);
+  };
 
   const sectionKeys = getSectionsForType(sopType);
   const isPro = sopType === "detailed";
@@ -92,35 +101,95 @@ export default function ExportBar({ data, brand, sopType }) {
         }}>
           <div style={{
             background: colors.white, borderRadius: radii.card, padding: "28px 28px 24px",
-            maxWidth: "420px", width: "100%", boxShadow: "0 8px 40px rgba(0,0,0,0.18)",
+            maxWidth: "480px", width: "100%", boxShadow: "0 8px 40px rgba(0,0,0,0.18)",
+            maxHeight: "90vh", overflowY: "auto",
           }}>
-            <h3 style={{ margin: "0 0 8px", fontSize: "18px", fontWeight: typography.weights.bold, color: colors.primary, fontFamily: typography.fontFamily }}>
-              Ready to export?
+            <h3 style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: typography.weights.bold, color: colors.primary, fontFamily: typography.fontFamily }}>
+              Almost ready — let's finish your document
             </h3>
-            <p style={{ margin: "0 0 16px", fontSize: typography.sizes.body, color: colors.textMuted, lineHeight: 1.6, fontFamily: typography.fontFamily }}>
-              Take a quick look and make sure everything reads the way you want it.
+            <p style={{ margin: "0 0 20px", fontSize: typography.sizes.body, color: colors.textMuted, lineHeight: 1.6, fontFamily: typography.fontFamily }}>
+              These details will appear on your exported SOP.
             </p>
 
+            {/* Your details */}
+            <div style={{ marginBottom: "20px" }}>
+              <div style={{ fontSize: typography.sizes.body2, fontWeight: typography.weights.bold, color: colors.primary, marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.8px" }}>
+                Your details
+              </div>
+              <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ ...S.label, marginBottom: "4px" }}>Your name</label>
+                  <input
+                    style={{ ...S.input, fontSize: typography.sizes.body }}
+                    placeholder="e.g., Jess McKnight"
+                    value={brand.createdBy || ""}
+                    onChange={e => setBrand(b => ({ ...b, createdBy: e.target.value }))}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ ...S.label, marginBottom: "4px" }}>Business name</label>
+                  <input
+                    style={{ ...S.input, fontSize: typography.sizes.body }}
+                    placeholder="e.g., Shine Bright Virtual"
+                    value={brand.businessName || ""}
+                    onChange={e => setBrand(b => ({ ...b, businessName: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Branding */}
+            <div style={{ marginBottom: "20px" }}>
+              <div style={{ fontSize: typography.sizes.body2, fontWeight: typography.weights.bold, color: colors.primary, marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.8px" }}>
+                Your branding
+              </div>
+
+              {/* Logo */}
+              <div style={{ marginBottom: "10px" }}>
+                <label style={{ ...S.label, marginBottom: "4px" }}>Logo</label>
+                <input type="file" ref={logoRef} accept="image/*" style={{ display: "none" }} onChange={handleLogoUpload} />
+                <div
+                  onClick={() => logoRef.current?.click()}
+                  style={{ border: `1.5px dashed ${colors.borderDashed}`, borderRadius: radii.lg, padding: "12px 16px", cursor: "pointer", background: colors.inputBg, display: "flex", alignItems: "center", gap: "12px" }}
+                >
+                  {brand.logo ? (
+                    <>
+                      <img src={brand.logo} alt="Logo" style={{ maxHeight: "36px", maxWidth: "120px", objectFit: "contain" }} />
+                      <span style={{ fontSize: typography.sizes.caption, color: colors.textFaint }}>{brand.logoName} — click to change</span>
+                    </>
+                  ) : (
+                    <span style={{ fontSize: typography.sizes.body2, color: colors.textMuted }}>Upload your logo (optional)</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Colors */}
+              <div style={{ display: "flex", gap: "10px" }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ ...S.label, marginBottom: "4px" }}>Primary color</label>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <input type="color" value={brand.primaryColor} onChange={e => setBrand(b => ({ ...b, primaryColor: e.target.value }))} style={{ width: "36px", height: "36px", border: "none", padding: 0, cursor: "pointer", borderRadius: "6px" }} />
+                    <input style={{ ...S.input, flex: 1 }} value={brand.primaryColor} onChange={e => setBrand(b => ({ ...b, primaryColor: e.target.value }))} />
+                  </div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ ...S.label, marginBottom: "4px" }}>Accent color</label>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <input type="color" value={brand.accentColor} onChange={e => setBrand(b => ({ ...b, accentColor: e.target.value }))} style={{ width: "36px", height: "36px", border: "none", padding: 0, cursor: "pointer", borderRadius: "6px" }} />
+                    <input style={{ ...S.input, flex: 1 }} value={brand.accentColor} onChange={e => setBrand(b => ({ ...b, accentColor: e.target.value }))} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section status */}
             {empty.length > 0 && (
               <div style={{ background: "#FFF8F0", border: `1px solid ${colors.borderWarm}`, borderRadius: radii.lg, padding: "12px 14px", marginBottom: "16px" }}>
-                <div style={{ fontSize: typography.sizes.body2, fontWeight: typography.weights.semibold, color: colors.accentDark, marginBottom: "6px" }}>
+                <div style={{ fontSize: typography.sizes.body2, fontWeight: typography.weights.semibold, color: colors.accentDark, marginBottom: "4px" }}>
                   These sections are still empty:
                 </div>
                 {empty.map(k => (
-                  <div key={k} style={{ fontSize: typography.sizes.body2, color: colors.textMuted }}>
-                    {SECTIONS[k].num}. {SECTIONS[k].title}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {filled.length > 0 && (
-              <div style={{ background: "#F3FAF4", border: "1px solid #C6F0D0", borderRadius: radii.lg, padding: "12px 14px", marginBottom: "20px" }}>
-                <div style={{ fontSize: typography.sizes.body2, fontWeight: typography.weights.semibold, color: "#2A7A3B", marginBottom: "6px" }}>
-                  Sections with content:
-                </div>
-                {filled.map(k => (
-                  <div key={k} style={{ fontSize: typography.sizes.body2, color: colors.textMuted }}>
+                  <div key={k} style={{ fontSize: typography.sizes.caption, color: colors.textMuted }}>
                     {SECTIONS[k].num}. {SECTIONS[k].title}
                   </div>
                 ))}
