@@ -177,27 +177,8 @@ export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
     // ── Synthetic tools section ──────────────────────────────────────────────
     if (key === "__tools__") {
       children.push(sectionHeading("Tools"));
-      toolMap.forEach(({ display, phases }) => {
-        const phaseList = [...phases];
-        let line;
-        if (phaseList.length === 0) {
-          line = display;
-        } else if (phaseList.length === 1) {
-          line = ` — used for ${phaseList[0]}`;
-        } else {
-          const copy = [...phaseList];
-          const last = copy.pop();
-          line = ` — used for ${copy.join(", ")} and ${last}`;
-        }
-        children.push(
-          new Paragraph({
-            children: [
-              new TextRun({ text: display, bold: true, size: 20, color: "333333" }),
-              ...(line !== display ? [new TextRun({ text: line, size: 20, color: "333333" })] : []),
-            ],
-            spacing: sp(0, 120),
-          })
-        );
+      toolMap.forEach(({ display }) => {
+        children.push(bulletItem(display));
       });
       continue;
     }

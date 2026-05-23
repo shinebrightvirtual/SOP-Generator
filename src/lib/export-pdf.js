@@ -285,33 +285,17 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
       y += 10; // section gap
       drawSectionHeading("Tools");
 
-      toolMap.forEach(({ display, phases }) => {
-        const phaseList = [...phases];
-        let line;
-        if (phaseList.length === 0) {
-          line = display;
-        } else if (phaseList.length === 1) {
-          line = `${display} — used for ${phaseList[0]}`;
-        } else {
-          const last = phaseList.pop();
-          line = `${display} — used for ${phaseList.join(", ")} and ${last}`;
-        }
-        const needed = wrappedHeight(doc, line, CW, 9) + 3;
-        checkPage(needed);
-        // Tool name bold, rest normal
+      toolMap.forEach(({ display }) => {
+        checkPage(8);
         doc.setFontSize(9);
-        doc.setFont("helvetica", "bold");
+        doc.setFont("helvetica", "normal");
         doc.setTextColor(51, 51, 51);
-        const boldW = doc.getTextWidth(display);
-        doc.text(display, ML, y);
-        // rest of line in normal weight
-        if (phaseList.length > 0 || line !== display) {
-          const rest = line.slice(display.length);
-          doc.setFont("helvetica", "normal");
-          doc.text(rest, ML + boldW, y);
-        }
-        y += lineH(9, 1.5);
-        y += 2;
+        // Bullet dot in accent color
+        doc.setTextColor(ar, ag, ab);
+        doc.text("•", ML, y);
+        doc.setTextColor(51, 51, 51);
+        y = addText(doc, display, ML + 5, y, CW - 5, 9, "normal", 1.5);
+        y += 1.5;
       });
       continue;
     }
