@@ -7,7 +7,7 @@ import BulletListField from "./BulletListField.jsx";
 
 export { TextField, TextareaField, SelectField, StepListField, DetailedStepsField, BulletListField };
 
-export function renderField(field, data, onChange) {
+export function renderField(field, data, onChange, context = {}) {
   const val = data[field.key];
   switch (field.type) {
     case "text":
@@ -20,7 +20,7 @@ export function renderField(field, data, onChange) {
     case "steplist":
       return <StepListField key={field.key} field={field} value={val} onChange={onChange} />;
     case "detailedsteps":
-      return <DetailedStepsField key={field.key} field={field} value={val} onChange={onChange} />;
+      return <DetailedStepsField key={field.key} field={field} value={val} onChange={onChange} context={context} />;
     case "bulletlist":
       return <BulletListField key={field.key} field={field} value={val} onChange={onChange} />;
     default:

@@ -11,21 +11,21 @@ export const SECTIONS = {
   overview: {
     id: "overview",
     num: 1,
-    title: "Overview & Ownership",
-    subtitle: "The quick snapshot — what's it called and who owns it?",
+    title: "Overview",
+    subtitle: "Let's start with the basics — what is this process and who's involved?",
     basic: true,
     aiPrompt:
       "Extract: SOP title, category (Operations/Client Experience/Marketing/Finance/Team), who owns this process, who executes it, and frequency.",
     fields: [
       {
         key: "sopTitle",
-        label: "What's this SOP called?",
+        label: "What do you call this process?",
         type: "text",
-        placeholder: "e.g., Client Onboarding Process",
+        placeholder: "e.g., Client Onboarding, Weekly Invoicing, Content Publishing",
       },
       {
         key: "category",
-        label: "What category does it fall under?",
+        label: "What area of the business is it for?",
         type: "select",
         options: [
           "Operations",
@@ -37,19 +37,19 @@ export const SECTIONS = {
       },
       {
         key: "owner",
-        label: "Who's accountable for this? (even if they don't do the work)",
+        label: "Who's responsible for making sure this gets done?",
         type: "text",
-        placeholder: "e.g., Jess, Operations Manager",
+        placeholder: "e.g., Jess, Operations Manager — the person who owns it, even if they don't do the work",
       },
       {
         key: "executor",
-        label: "Who actually does this process?",
+        label: "Who actually does the work?",
         type: "text",
-        placeholder: "e.g., VA, Team Lead, You",
+        placeholder: "e.g., VA, Team Lead, Me",
       },
       {
         key: "frequency",
-        label: "How often does this happen?",
+        label: "How often does this need to happen?",
         type: "select",
         options: [
           "One-time",
@@ -64,7 +64,7 @@ export const SECTIONS = {
       },
       {
         key: "status",
-        label: "Status",
+        label: "Where is this SOP at?",
         type: "select",
         options: ["Draft", "Active", "Needs Review", "Archived"],
       },
@@ -76,31 +76,31 @@ export const SECTIONS = {
   whyItMatters: {
     id: "whyItMatters",
     num: 2,
-    title: "Why This Matters",
-    subtitle: "What problem does this solve — and what breaks if you skip it?",
+    title: "Why It Matters",
+    subtitle: "Help whoever's reading this understand why this process exists.",
     basic: true,
     aiPrompt:
       "Extract: what problem this process solves, the desired outcome, and what goes wrong if skipped.",
     fields: [
       {
         key: "problemSolved",
-        label: "What problem does this solve?",
+        label: "Why does this process exist? Was there something that happened that made you create it?",
         type: "textarea",
         placeholder:
-          "What was falling through the cracks before this process existed?",
+          "e.g., We kept dropping the ball on client handoffs when someone was out sick — so we documented it.",
       },
       {
         key: "desiredOutcome",
-        label: "What does a great result look like?",
+        label: "When this goes well, what does that look like?",
         type: "textarea",
-        placeholder: "When this goes perfectly, what happens?",
+        placeholder: "What's the ideal outcome when everything goes smoothly?",
       },
       {
         key: "riskOfSkipping",
-        label: "What breaks if you skip this?",
+        label: "What happens if someone skips this?",
         type: "textarea",
         placeholder:
-          "The real cost — time, money, client trust — of not following this...",
+          "The real impact — on clients, the team, or the business — of not following this...",
       },
     ],
   },
@@ -108,38 +108,38 @@ export const SECTIONS = {
   triggers: {
     id: "triggers",
     num: 3,
-    title: "Triggers & Boundaries",
-    subtitle: "What kicks this off — and how do you know you're done?",
+    title: "When & How It Runs",
+    subtitle: "What starts this process, and how do you know when it's done?",
     basic: true,
     aiPrompt:
       "Extract: what triggers this process, what marks completion, prerequisites, and downstream dependencies.",
     fields: [
       {
         key: "trigger",
-        label: "What kicks this process off?",
+        label: "What usually starts this process?",
         type: "textarea",
         placeholder:
-          "e.g., A new client signs their contract, an order comes in...",
+          "e.g., A new client signs their contract, an order comes in, the first of the month arrives...",
       },
       {
         key: "completion",
-        label: "How do you know it's done?",
+        label: "How do you know it's properly finished?",
         type: "textarea",
         placeholder: "The clear signal that this process is fully wrapped up",
       },
       {
         key: "prerequisites",
-        label: "What needs to be in place first?",
+        label: "Is there anything that needs to be sorted out before you can start?",
         type: "textarea",
         placeholder:
-          "Anything that has to happen before you can start...",
+          "Anything that has to be in place before this process can begin...",
       },
       {
         key: "downstream",
-        label: "What depends on this being done?",
+        label: "What else in the business relies on this being done?",
         type: "textarea",
         placeholder:
-          "Other processes that rely on this being finished correctly...",
+          "Other processes or people that depend on this being finished correctly...",
       },
     ],
   },
@@ -147,17 +147,17 @@ export const SECTIONS = {
   bigPicture: {
     id: "bigPicture",
     num: 4,
-    title: "The Big Picture",
-    subtitle: "The 30-second overview — major phases only",
+    title: "The Overview",
+    subtitle: "Just the big chunks — we'll get into the detail in the next section.",
     basic: true,
     aiPrompt:
       "Extract: the 5-7 major phases of this process as a high-level numbered flow.",
     fields: [
       {
         key: "flowSteps",
-        label: "High-level flow (5–7 major phases)",
+        label: "Walk me through the main steps — just the big chunks, not the detail yet",
         type: "steplist",
-        placeholder: "Describe this phase...",
+        placeholder: "Describe this phase in a sentence...",
         maxSteps: 7,
       },
     ],
@@ -166,15 +166,15 @@ export const SECTIONS = {
   detailedSteps: {
     id: "detailedSteps",
     num: 5,
-    title: "Step-by-Step",
-    subtitle: "The full how-to — detailed enough that anyone could follow it",
+    title: "Step by Step",
+    subtitle: "Now walk me through the whole thing, step by step.",
     basic: true,
     aiPrompt:
       "Extract: every step with what happens, tools/systems used, and time estimates.",
     fields: [
       {
         key: "steps",
-        label: "Step-by-step execution",
+        label: "Let's go through each step — what exactly happens, what tools are involved, and roughly how long it takes",
         type: "detailedsteps",
       },
     ],
@@ -183,35 +183,35 @@ export const SECTIONS = {
   decisions: {
     id: "decisions",
     num: 6,
-    title: "Decisions & Escalation",
-    subtitle: "Where the judgment calls live — so nobody's guessing",
+    title: "Decisions",
+    subtitle: "Where the judgment calls live — so nobody's left guessing.",
     basic: false,
     aiPrompt:
       "Extract: decisions that can be made independently, those needing approval, what to do if info is missing, and escalation contacts.",
     fields: [
       {
         key: "independentDecisions",
-        label: "What can they decide on their own?",
+        label: "What decisions can the person doing this handle on their own?",
         type: "textarea",
-        placeholder: "Things the executor can handle without checking in...",
+        placeholder: "Things they can sort out without checking in with anyone...",
       },
       {
         key: "approvalRequired",
-        label: "What needs a sign-off?",
+        label: "What needs to come to the person in charge of this first?",
         type: "textarea",
-        placeholder: "Decisions that require your approval or someone else's...",
+        placeholder: "Decisions that need a sign-off before moving forward...",
       },
       {
         key: "missingInfo",
-        label: "If something's missing or unclear...",
+        label: "What should they do if they're stuck or something's missing?",
         type: "textarea",
-        placeholder: "What should they do when they hit a wall?",
+        placeholder: "What's the move when they hit a wall or something doesn't add up?",
       },
       {
         key: "escalationContact",
-        label: "Who do they come to?",
+        label: "Who do they come to if something goes wrong?",
         type: "text",
-        placeholder: "The person to contact when something goes sideways",
+        placeholder: "The person to reach out to when things go sideways",
       },
     ],
   },
@@ -219,29 +219,29 @@ export const SECTIONS = {
   doneRight: {
     id: "doneRight",
     num: 7,
-    title: "Done Right Checklist",
-    subtitle: "How you know it's actually finished — not just technically done",
+    title: "Getting It Right",
+    subtitle: "How you know it's actually finished — not just technically done.",
     basic: false,
     aiPrompt:
       "Extract: definition of done, quality checklist items, and common mistakes to avoid.",
     fields: [
       {
         key: "completionCriteria",
-        label: "This SOP is complete when...",
+        label: "How do you know this was done properly, not just done?",
         type: "textarea",
         placeholder: "Be specific — what does truly done look like?",
       },
       {
         key: "qualityChecklist",
-        label: "Quality checkpoints",
+        label: "Are there certain checkpoints you'd want someone to hit?",
         type: "bulletlist",
-        placeholder: "Add a checkpoint...",
+        placeholder: "e.g., Confirmation email sent, file saved to the right folder, client notified...",
       },
       {
         key: "commonMistakes",
-        label: "Common mistakes to watch for",
+        label: "If this goes wrong, what are usually the reasons?",
         type: "bulletlist",
-        placeholder: "Add something that tends to go wrong...",
+        placeholder: "The things that tend to trip people up...",
       },
     ],
   },
@@ -249,37 +249,31 @@ export const SECTIONS = {
   aiAutomation: {
     id: "aiAutomation",
     num: 8,
-    title: "AI & Automation",
-    subtitle: "Where technology can support or speed up this process",
+    title: "Tools & Automation",
+    subtitle: "Where technology supports this process — and where it shouldn't.",
     basic: false,
     aiPrompt:
       "Extract: where AI or automation could support this, guardrails, human review points, and connected tools.",
     fields: [
       {
         key: "aiUsage",
-        label: "Where AI or automation supports this process",
+        label: "Where does AI or automation already help with this, if at all?",
         type: "textarea",
         placeholder:
-          "e.g., AI drafts initial copy, Zapier sends notifications...",
+          "e.g., AI drafts the initial copy, Zapier sends the notification...",
       },
       {
         key: "aiGuardrails",
-        label: "What AI should never handle here",
+        label: "What should never be left to a tool — and where do you need a real person involved?",
         type: "textarea",
-        placeholder: "Critical boundaries for automated tools...",
-      },
-      {
-        key: "humanReview",
-        label: "Where human review is required",
-        type: "textarea",
-        placeholder: "Checkpoints that need a real person...",
+        placeholder: "The parts that need a human eye, judgment, or sign-off...",
       },
       {
         key: "connectedTools",
-        label: "Connected tools & automations",
+        label: "What tools or automations are connected to this?",
         type: "text",
         placeholder:
-          "e.g., Zapier, ChatGPT, Slack bot, Airtable automation...",
+          "e.g., Zapier, ChatGPT, Slack, Airtable, ClickUp...",
       },
     ],
   },
@@ -287,38 +281,44 @@ export const SECTIONS = {
   evolution: {
     id: "evolution",
     num: 9,
-    title: "Tracking & Evolution",
-    subtitle: "Keeping this SOP alive and improving over time",
+    title: "Keeping It Current",
+    subtitle: "How this SOP stays alive and useful over time.",
     basic: false,
     aiPrompt:
       "Extract: metrics to monitor, who reviews, how feedback is logged, and revision triggers.",
     fields: [
       {
         key: "metrics",
-        label: "Metrics or signals to monitor",
+        label: "How do you know this process is still working well?",
         type: "textarea",
         placeholder:
-          "How do you know this process is working well?",
+          "What would you notice if something was off?",
       },
       {
         key: "reviewer",
-        label: "Who reviews performance?",
+        label: "Who keeps an eye on it?",
         type: "text",
-        placeholder: "Role responsible for reviewing this SOP",
+        placeholder: "The person responsible for reviewing this over time",
       },
       {
         key: "feedbackProcess",
-        label: "How issues or feedback get logged",
+        label: "How do people flag if something's off?",
         type: "text",
         placeholder:
-          "e.g., Slack channel, Airtable form, shared doc...",
+          "e.g., Slack channel, Airtable form, shared doc, just tell me directly...",
       },
       {
         key: "revisionTriggers",
-        label: "What would trigger a revision?",
+        label: "What would make you want to update this?",
         type: "textarea",
         placeholder:
-          "e.g., tool change, team change, recurring problems...",
+          "e.g., a tool change, someone new joins the team, something keeps going wrong...",
+      },
+      {
+        key: "reviewFrequency",
+        label: "How often do you want to review this and make sure it's still up to date?",
+        type: "select",
+        options: ["Monthly", "Quarterly", "Every 6 months", "Annually", "Only when something changes"],
       },
     ],
   },

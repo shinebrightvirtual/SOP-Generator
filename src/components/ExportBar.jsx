@@ -47,9 +47,9 @@ export default function ExportBar({ data, brand, sopType }) {
   const busy = status !== null;
 
   const statusLabel = status === "polishing"
-    ? "✨ Polishing your language…"
+    ? "Polishing your language…"
     : status === "generating"
-    ? "📄 Building your document…"
+    ? "Building your document…"
     : null;
 
   const btnStyle = (primary) => ({
@@ -74,10 +74,10 @@ export default function ExportBar({ data, brand, sopType }) {
       ) : (
         <>
           <button style={btnStyle(false)} onClick={() => handleExport("pdf")} disabled={busy}>
-            📋 Export PDF
+            Export PDF
           </button>
           <button style={btnStyle(true)} onClick={() => handleExport("docx")} disabled={busy}>
-            📝 Word / Google Docs
+            Word / Google Docs
           </button>
           <div style={{ fontSize: typography.sizes.caption, color: colors.textFaint, display: "flex", alignItems: "center" }}>
             AI polishes your language before exporting

@@ -37,7 +37,12 @@ export default function ManualEditor({ activeSection, sectionKeys, data, onField
 
         {/* Fields */}
         {section.fields.map(field =>
-          renderField(field, data[activeSection] || {}, (key, val) => onFieldChange(activeSection, key, val))
+          renderField(
+            field,
+            data[activeSection] || {},
+            (key, val) => onFieldChange(activeSection, key, val),
+            activeSection === "detailedSteps" ? { flowSteps: data.bigPicture?.flowSteps } : {}
+          )
         )}
 
         {/* Skip hint */}

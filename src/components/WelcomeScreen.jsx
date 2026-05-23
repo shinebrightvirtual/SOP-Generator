@@ -49,26 +49,19 @@ export default function WelcomeScreen({ onStart, initialBusinessName }) {
 
           {/* Greeting */}
           <div style={{ textAlign: "center", marginBottom: "36px" }}>
-            <div style={{
-              width: "60px", height: "60px", borderRadius: "50%", background: colors.primary,
-              margin: "0 auto 16px", display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 4px 16px rgba(45,53,38,0.2)",
-            }}>
-              <span style={{ fontSize: "26px" }}>✦</span>
-            </div>
             <h1 style={{ fontSize: "30px", fontWeight: typography.weights.bold, color: colors.primary, margin: "0 0 10px", letterSpacing: "-0.5px", fontFamily: typography.fontFamily }}>
               Let's build your SOP
             </h1>
             <p style={{ fontSize: "15px", color: colors.textMuted, margin: 0, lineHeight: 1.7 }}>
-              No overwhelm, no jargon — just a simple way to document<br />
-              how your business actually works.
+              Just answer a few questions about how you do it —<br />
+              we'll turn it into a proper SOP.
             </p>
           </div>
 
           {/* Business name */}
           <div style={cardStyle}>
             <label style={{ display: "block", fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "10px" }}>
-              First — what's your business called?
+              What is the name of your business?
             </label>
             <input
               style={{ ...S.input, fontSize: "15px", padding: "11px 14px" }}
@@ -93,41 +86,23 @@ export default function WelcomeScreen({ onStart, initialBusinessName }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
               <button onClick={() => setSopType("basic")} style={optionBtn(sopType === "basic", colors.primary)}>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
-                  <div style={{
-                    width: "38px", height: "38px", borderRadius: "10px", background: sopType === "basic" ? colors.primary : colors.warmBg,
-                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "18px",
-                    transition: "background 0.15s",
-                  }}>
-                    📋
+                <div>
+                  <div style={{ fontWeight: typography.weights.bold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "4px" }}>
+                    Basic — the essentials
                   </div>
-                  <div>
-                    <div style={{ fontWeight: typography.weights.bold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "4px" }}>
-                      Basic SOP — the essentials
-                    </div>
-                    <div style={{ fontSize: "13px", color: colors.textMuted, lineHeight: 1.5 }}>
-                      5 sections covering overview, purpose, triggers, the big picture, and step-by-step. Perfect for getting something solid done quickly.
-                    </div>
+                  <div style={{ fontSize: "13px", color: colors.textMuted, lineHeight: 1.5 }}>
+                    5 sections: overview, why it matters, when it runs, the big picture, and step-by-step. Great for getting something solid done quickly.
                   </div>
                 </div>
               </button>
 
               <button onClick={() => setSopType("detailed")} style={optionBtn(sopType === "detailed", colors.accent)}>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
-                  <div style={{
-                    width: "38px", height: "38px", borderRadius: "10px", background: sopType === "detailed" ? `${colors.accent}22` : colors.warmBg,
-                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "18px",
-                    transition: "background 0.15s",
-                  }}>
-                    📚
+                <div>
+                  <div style={{ fontWeight: typography.weights.bold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "4px" }}>
+                    Full Detail — the complete picture
                   </div>
-                  <div>
-                    <div style={{ fontWeight: typography.weights.bold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "4px" }}>
-                      Full Detail — the complete framework
-                    </div>
-                    <div style={{ fontSize: "13px", color: colors.textMuted, lineHeight: 1.5 }}>
-                      All 9 sections including decisions, quality checklists, AI & automation, and how to keep the SOP evolving. Great for handing off to a team.
-                    </div>
+                  <div style={{ fontSize: "13px", color: colors.textMuted, lineHeight: 1.5 }}>
+                    All 9 sections including decisions, quality checks, tools and automation, and how to keep it updated over time. Great for handing off to a team.
                   </div>
                 </div>
               </button>

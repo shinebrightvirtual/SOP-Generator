@@ -65,7 +65,7 @@ export default function VideoImportPanel({ onTranscriptReady }) {
           onClick={() => setExpanded(e => !e)}
           style={{ display: "flex", alignItems: "center", gap: "8px", background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit", width: "100%", textAlign: "left" }}
         >
-          <span style={{ fontSize: "18px" }}>🎥</span>
+          <span style={{ fontSize: "18px", color: colors.accent, fontWeight: 700 }}>+</span>
           <div style={{ flex: 1 }}>
             <div style={{ ...S.secNum(colors.accent), marginBottom: 0 }}>AI-Powered Import</div>
             <div style={{ fontSize: "12px", color: colors.textMuted }}>Got a Loom or screen recording? Let AI draft your SOP automatically.</div>
@@ -92,7 +92,7 @@ export default function VideoImportPanel({ onTranscriptReady }) {
                     onKeyDown={e => e.key === "Enter" && handleLoomSubmit()}
                   />
                   <button style={S.videoBtn("primary")} onClick={handleLoomSubmit}>
-                    ✦ Analyze
+                    Analyze
                   </button>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "12px 0" }}>
@@ -102,7 +102,7 @@ export default function VideoImportPanel({ onTranscriptReady }) {
                 </div>
                 <input type="file" ref={fileRef} accept="video/*" style={{ display: "none" }} onChange={handleFileUpload} />
                 <button style={S.uploadVideoBtn} onClick={() => fileRef.current?.click()}>
-                  📁 Upload a video file
+                  Upload a video file
                 </button>
               </>
             ) : (
@@ -115,7 +115,7 @@ export default function VideoImportPanel({ onTranscriptReady }) {
                     <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }`}</style>
                   )}
                   {status !== "done" && <div style={S.processingPulse} />}
-                  {status === "done" && <span style={{ fontSize: "16px" }}>✅</span>}
+                  {status === "done" && <span style={{ fontSize: "13px", fontWeight: 700, color: "#22a06b" }}>Done</span>}
                   <span style={{ fontSize: "13px", fontWeight: 500, color: colors.textSecondary }}>
                     {status === "transcribing" && "Transcribing video..."}
                     {status === "analyzing" && "AI is analyzing & drafting your SOP..."}

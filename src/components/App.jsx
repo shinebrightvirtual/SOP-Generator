@@ -110,13 +110,13 @@ export default function App() {
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "0 16px" }}>
         <div style={S.tabRow}>
           <button style={S.tab(activeView === "editor")} onClick={() => setActiveView("editor")}>
-            {aiMode ? "🤖 Review" : "✏️ Editor"}
+            {aiMode ? "Review" : "Editor"}
           </button>
           <button style={S.tab(activeView === "preview")} onClick={() => setActiveView("preview")}>
-            👁 Preview
+            Preview
           </button>
           <button style={S.tab(activeView === "brand")} onClick={() => setActiveView("brand")}>
-            🎨 Brand
+            Brand
           </button>
         </div>
       </div>

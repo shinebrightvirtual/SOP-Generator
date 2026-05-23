@@ -17,7 +17,7 @@ export default function AIReviewFlow({ aiData, onConfirmAll, onFieldChange, sect
           </div>
           {allConfirmed && (
             <button style={{ ...S.videoBtn("primary"), padding: "10px 22px" }} onClick={onConfirmAll}>
-              ✦ Finish & Edit
+              Finish & Edit
             </button>
           )}
         </div>
