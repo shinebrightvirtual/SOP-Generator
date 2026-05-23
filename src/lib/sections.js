@@ -94,7 +94,7 @@ export const SECTIONS = {
     id: "triggers",
     num: 3,
     title: "When & How It Runs",
-    subtitle: "What starts this process, and how do you know when it's done?",
+    subtitle: "What starts this process and how do you know when it's done?",
     basic: true,
     aiPrompt:
       "Extract: what triggers this process, what marks completion, prerequisites, and downstream dependencies.",
@@ -169,7 +169,7 @@ export const SECTIONS = {
     id: "decisions",
     num: 6,
     title: "Decisions",
-    subtitle: "Where the judgment calls live, so nobody's left guessing.",
+    subtitle: "Where the judgment calls live so nobody's left guessing.",
     basic: false,
     aiPrompt:
       "Extract: decisions that can be made independently, those needing approval, what to do if info is missing, and escalation contacts.",
@@ -223,7 +223,7 @@ export const SECTIONS = {
     id: "aiAutomation",
     num: 8,
     title: "Tools & Automation",
-    subtitle: "Where technology supports this process, and where it shouldn't.",
+    subtitle: "Where technology supports this process and where it shouldn't.",
     basic: false,
     aiPrompt:
       "Extract: where AI or automation could support this, guardrails, human review points, and connected tools.",

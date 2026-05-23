@@ -41,7 +41,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, initialBusin
     if (!file) return;
     setUploadError("");
     setProcessing(true);
-    setProcessStatus("Transcribing your recording...");
+    setProcessStatus("Transcribing your recording — this may take a minute or two depending on the length...");
     try {
       const transcript = await transcribeVideoFile(file);
       setProcessStatus("Building your SOP draft...");

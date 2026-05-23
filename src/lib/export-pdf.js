@@ -91,7 +91,7 @@ function collectTools(data) {
 }
 
 // ─── MAIN EXPORT ──────────────────────────────────────────────────────────────
-export async function exportToPDF(data, brand, isPro) {
+export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
 
   // Brand values
@@ -174,13 +174,6 @@ export async function exportToPDF(data, brand, isPro) {
     doc.text(line, ML + CW / 2, y + i * titleLineH, { align: "center" });
   });
   y += titleLines.length * titleLineH + 3;
-
-  // "Standard Operating Procedure" subtitle — italic grey 9pt
-  doc.setFontSize(9);
-  doc.setFont("helvetica", "italic");
-  doc.setTextColor(153, 153, 153);
-  doc.text("Standard Operating Procedure", ML + CW / 2, y, { align: "center" });
-  y += lineH(9, 1.4) + 5;
 
   // Metadata line — italic grey 9pt
   const metaParts = [];
@@ -427,29 +420,39 @@ export async function exportToPDF(data, brand, isPro) {
     }
 
     // ── STANDARD FIELDS (all remaining sections) ──────────────────────────────
-    let firstField = true;
-    for (const field of sec.fields) {
-      const val = sData[field.key];
-      if (!val) continue;
-
-      // ── bulletlist ──────────────────────────────────────────────────────────
-      if (field.type === "bulletlist") {
-        const items = Array.isArray(val)
-          ? val.filter(v => typeof v === "string" && v.trim())
-          : [];
+    // Use AI-generated paragraph if available, otherwise fall back to individual fields
+    if (paragraphs[key]) {
+      drawParagraph(paragraphs[key]);
+      // Still render bullet lists (checklists) below the paragraph
+      for (const field of sec.fields) {
+        if (field.type !== "bulletlist") continue;
+        const val = sData[field.key];
+        const items = Array.isArray(val) ? val.filter(v => typeof v === "string" && v.trim()) : [];
         if (!items.length) continue;
-        if (!firstField) y += 4;
+        y += 4;
         drawBulletList(items);
-        firstField = false;
-        continue;
       }
+    } else {
+      let firstField = true;
+      for (const field of sec.fields) {
+        const val = sData[field.key];
+        if (!val) continue;
 
-      // ── text / textarea / text-like ─────────────────────────────────────────
-      if (typeof val === "string" && val.trim()) {
-        if (!firstField) y += 4;
-        drawParagraph(val);
-        firstField = false;
-        continue;
+        if (field.type === "bulletlist") {
+          const items = Array.isArray(val) ? val.filter(v => typeof v === "string" && v.trim()) : [];
+          if (!items.length) continue;
+          if (!firstField) y += 4;
+          drawBulletList(items);
+          firstField = false;
+          continue;
+        }
+
+        if (typeof val === "string" && val.trim()) {
+          if (!firstField) y += 4;
+          drawParagraph(val);
+          firstField = false;
+          continue;
+        }
       }
     }
   }

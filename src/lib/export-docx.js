@@ -3,250 +3,311 @@ import {
   Packer,
   Paragraph,
   TextRun,
-  HeadingLevel,
   AlignmentType,
   BorderStyle,
-  ShadingType,
-  TableRow,
-  TableCell,
-  Table,
-  WidthType,
   Header,
   Footer,
   PageNumber,
-  NumberFormat,
+  TabStopType,
+  TabStopLeader,
 } from "docx";
 import { saveAs } from "file-saver";
 import { SECTIONS, SECTION_ORDER } from "./sections.js";
 
-function hexToDocxColor(hex) {
-  return hex.replace("#", "");
+function hex(h) { return h.replace("#", ""); }
+
+function rule(color) {
+  return { bottom: { color, space: 1, style: BorderStyle.SINGLE, size: 6 } };
 }
 
-function buildSectionParagraphs(sec, sData, primaryColor, accentColor) {
-  const paras = [];
-  const pc = hexToDocxColor(primaryColor);
-  const ac = hexToDocxColor(accentColor);
-
-  // Section heading
-  paras.push(
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: `${sec.num}. ${sec.title}`,
-          bold: true,
-          color: pc,
-          size: 24,
-        }),
-      ],
-      border: {
-        bottom: { color: ac, space: 1, style: BorderStyle.SINGLE, size: 8 },
-      },
-      spacing: { before: 280, after: 120 },
-    })
-  );
-
-  for (const field of sec.fields) {
-    const val = sData[field.key];
-    if (!val) continue;
-
-    if (field.type === "steplist" && Array.isArray(val)) {
-      const items = val.filter(v => v.trim());
-      if (!items.length) continue;
-      items.forEach((v, i) => {
-        paras.push(
-          new Paragraph({
-            children: [
-              new TextRun({ text: `${i + 1}.  `, bold: true, color: ac, size: 20 }),
-              new TextRun({ text: v, size: 20 }),
-            ],
-            spacing: { before: 60, after: 60 },
-            indent: { left: 360 },
-          })
-        );
-      });
-      continue;
-    }
-
-    if (field.type === "detailedsteps" && Array.isArray(val)) {
-      val.filter(s => s.what?.trim()).forEach((s, i) => {
-        paras.push(
-          new Paragraph({
-            children: [new TextRun({ text: `Step ${i + 1}`, bold: true, color: pc, size: 20 })],
-            spacing: { before: 120, after: 40 },
-            indent: { left: 360 },
-          })
-        );
-        paras.push(
-          new Paragraph({
-            children: [new TextRun({ text: s.what, size: 20 })],
-            spacing: { after: 40 },
-            indent: { left: 720 },
-          })
-        );
-        if (s.tools) {
-          paras.push(
-            new Paragraph({
-              children: [
-                new TextRun({ text: "Tools: ", bold: true, size: 18, color: "888888" }),
-                new TextRun({ text: s.tools, size: 18, color: "888888" }),
-              ],
-              indent: { left: 720 },
-              spacing: { after: 20 },
-            })
-          );
-        }
-        if (s.time) {
-          paras.push(
-            new Paragraph({
-              children: [
-                new TextRun({ text: "Time: ", bold: true, size: 18, color: "888888" }),
-                new TextRun({ text: s.time, size: 18, color: "888888" }),
-              ],
-              indent: { left: 720 },
-              spacing: { after: 40 },
-            })
-          );
-        }
-      });
-      continue;
-    }
-
-    if (field.type === "bulletlist" && Array.isArray(val)) {
-      const items = val.filter(v => v.trim());
-      if (!items.length) continue;
-      paras.push(
-        new Paragraph({
-          children: [new TextRun({ text: field.label, bold: true, size: 18, color: "888888" })],
-          spacing: { before: 100, after: 40 },
-        })
-      );
-      items.forEach(v => {
-        paras.push(
-          new Paragraph({
-            children: [
-              new TextRun({ text: "•  ", bold: true, color: ac, size: 20 }),
-              new TextRun({ text: v, size: 20 }),
-            ],
-            spacing: { after: 60 },
-            indent: { left: 360 },
-          })
-        );
-      });
-      continue;
-    }
-
-    if (typeof val === "string" && val.trim() && sec.id !== "overview") {
-      paras.push(
-        new Paragraph({
-          children: [new TextRun({ text: field.label, bold: true, size: 18, color: "888888" })],
-          spacing: { before: 100, after: 40 },
-        })
-      );
-      paras.push(
-        new Paragraph({
-          children: [new TextRun({ text: val, size: 20 })],
-          spacing: { after: 80 },
-        })
-      );
-    }
-  }
-
-  return paras;
+function sp(before = 0, after = 0) {
+  return { before, after };
 }
 
-export async function exportToDOCX(data, brand, isPro) {
-  const primaryColor = brand.primaryColor || "#2D3526";
-  const accentColor = brand.accentColor || "#C49A3C";
+export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
+  const pc = brand.primaryColor || "#1B3A4B";
+  const ac = brand.accentColor  || "#E8985E";
   const biz = brand.businessName || "";
+  const createdBy = brand.createdBy || biz || "";
   const title = data.overview?.sopTitle || "Standard Operating Procedure";
-  const pc = hexToDocxColor(primaryColor);
-  const ac = hexToDocxColor(accentColor);
+  const versionDate = data.overview?.versionDate
+    ? new Date(data.overview.versionDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-  const children = [];
+  const pHex = hex(pc);
+  const aHex = hex(ac);
 
-  // Title block
-  if (biz) {
-    children.push(
+  // ── Running header ─────────────────────────────────────────────────────────
+  const pageHeader = new Header({
+    children: [
       new Paragraph({
-        children: [new TextRun({ text: biz.toUpperCase(), size: 16, bold: true, color: ac })],
-        spacing: { after: 60 },
-      })
-    );
-  }
-
-  children.push(
-    new Paragraph({
-      children: [new TextRun({ text: title, bold: true, color: pc, size: 36 })],
-      spacing: { after: 120 },
-    })
-  );
-
-  // Meta
-  const meta = [];
-  if (data.overview?.category) meta.push(data.overview.category);
-  if (data.overview?.status) meta.push(data.overview.status);
-  if (data.overview?.owner) meta.push(`Owner: ${data.overview.owner}`);
-  if (data.overview?.versionDate) meta.push(data.overview.versionDate);
-
-  if (meta.length) {
-    children.push(
-      new Paragraph({
-        children: [new TextRun({ text: meta.join("  ·  "), size: 18, color: "888888" })],
-        border: {
-          bottom: { color: ac, space: 1, style: BorderStyle.SINGLE, size: 6 },
-        },
-        spacing: { after: 240 },
-      })
-    );
-  }
-
-  // Sections
-  const sectionsToShow = SECTION_ORDER.filter(k => SECTIONS[k].basic || isPro);
-  for (const key of sectionsToShow) {
-    const sec = SECTIONS[key];
-    const sData = data[key] || {};
-    const hasContent = Object.values(sData).some(v =>
-      v && (typeof v === "string" ? v.trim() : Array.isArray(v) ? v.some(i => typeof i === "string" ? i.trim() : i?.what?.trim()) : false)
-    );
-    if (!hasContent && key !== "overview") continue;
-
-    const sectionParas = buildSectionParagraphs(sec, sData, primaryColor, accentColor);
-    children.push(...sectionParas);
-  }
-
-  // Footer line
-  children.push(
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: biz ? `© ${new Date().getFullYear()} ${biz}` : "Created with Shine Bright SOP Generator",
-          size: 16,
-          color: "AAAAAA",
-        }),
-      ],
-      border: {
-        top: { color: pc, space: 1, style: BorderStyle.SINGLE, size: 4 },
-      },
-      spacing: { before: 480 },
-      alignment: AlignmentType.CENTER,
-    })
-  );
-
-  const doc = new Document({
-    sections: [
-      {
-        properties: {
-          page: {
-            margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 },
-          },
-        },
-        children,
-      },
+        children: [
+          new TextRun({ text: "STANDARD OPERATING PROCEDURE", size: 14, color: "999999" }),
+          new TextRun({ text: "\t", size: 14 }),
+          new TextRun({ text: title, size: 14, color: "999999" }),
+        ],
+        border: rule("CCCCCC"),
+        spacing: sp(0, 60),
+        tabStops: [{ type: TabStopType.RIGHT, position: 9200 }],
+      }),
     ],
   });
 
+  // ── Running footer ─────────────────────────────────────────────────────────
+  const pageFooter = new Footer({
+    children: [
+      new Paragraph({
+        children: [
+          new TextRun({ children: [PageNumber.CURRENT], size: 14, color: "999999" }),
+          new TextRun({ text: " / ", size: 14, color: "999999" }),
+          new TextRun({ children: [PageNumber.TOTAL_PAGES], size: 14, color: "999999" }),
+        ],
+        alignment: AlignmentType.RIGHT,
+        border: { top: { color: "CCCCCC", space: 1, style: BorderStyle.SINGLE, size: 4 } },
+        spacing: sp(60, 0),
+      }),
+    ],
+  });
+
+  const children = [];
+
+  // ── Title block ────────────────────────────────────────────────────────────
+  children.push(
+    new Paragraph({
+      children: [new TextRun({ text: title, bold: true, size: 48, color: "333333" })],
+      alignment: AlignmentType.CENTER,
+      spacing: sp(480, 160),
+    })
+  );
+
+  const metaParts = [];
+  if (createdBy) metaParts.push(`Created by: ${createdBy}`);
+  metaParts.push(`Created on: ${versionDate}`);
+
+  children.push(
+    new Paragraph({
+      children: [new TextRun({ text: metaParts.join("     "), italics: true, size: 18, color: "999999" })],
+      alignment: AlignmentType.CENTER,
+      spacing: sp(0, 240),
+      border: rule("D2D2D2"),
+    })
+  );
+
+  // Spacer after title block
+  children.push(new Paragraph({ children: [], spacing: sp(0, 240) }));
+
+  // ── Section helper ─────────────────────────────────────────────────────────
+  function sectionHeading(text) {
+    return new Paragraph({
+      children: [new TextRun({ text: text.toUpperCase(), bold: true, size: 22, color: pHex })],
+      border: rule(aHex),
+      spacing: sp(400, 160),
+    });
+  }
+
+  function bodyParagraph(text) {
+    return new Paragraph({
+      children: [new TextRun({ text: String(text), size: 20, color: "333333" })],
+      spacing: sp(0, 200),
+    });
+  }
+
+  function bulletItem(text) {
+    return new Paragraph({
+      children: [
+        new TextRun({ text: "•  ", bold: true, color: aHex, size: 20 }),
+        new TextRun({ text: String(text), size: 20, color: "333333" }),
+      ],
+      spacing: sp(0, 120),
+      indent: { left: 360 },
+    });
+  }
+
+  function metaLine(label, value) {
+    return new Paragraph({
+      children: [
+        new TextRun({ text: `${label}: `, bold: true, size: 20, color: "666666" }),
+        new TextRun({ text: String(value), size: 20, color: "333333" }),
+      ],
+      spacing: sp(0, 100),
+    });
+  }
+
+  // ── Sections to render ─────────────────────────────────────────────────────
+  const sectionsToShow = SECTION_ORDER.filter(k => SECTIONS[k].basic || isPro);
+
+  // Inject tools section after triggers if tools exist
+  const toolMap = buildToolMap(data);
+  const renderOrder = [];
+  for (const key of sectionsToShow) {
+    renderOrder.push(key);
+    if (key === "triggers" && toolMap.size > 0) renderOrder.push("__tools__");
+  }
+
+  for (const key of renderOrder) {
+
+    // ── Synthetic tools section ──────────────────────────────────────────────
+    if (key === "__tools__") {
+      children.push(sectionHeading("Tools"));
+      toolMap.forEach(({ display, phases }) => {
+        const phaseList = [...phases];
+        let line;
+        if (phaseList.length === 0) {
+          line = display;
+        } else if (phaseList.length === 1) {
+          line = ` — used for ${phaseList[0]}`;
+        } else {
+          const copy = [...phaseList];
+          const last = copy.pop();
+          line = ` — used for ${copy.join(", ")} and ${last}`;
+        }
+        children.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: display, bold: true, size: 20, color: "333333" }),
+              ...(line !== display ? [new TextRun({ text: line, size: 20, color: "333333" })] : []),
+            ],
+            spacing: sp(0, 120),
+          })
+        );
+      });
+      continue;
+    }
+
+    const sec = SECTIONS[key];
+    const sData = data[key] || {};
+    const hasContent = Object.values(sData).some(v =>
+      v && (typeof v === "string" ? v.trim() : typeof v === "boolean" ? false : Array.isArray(v) ? v.some(i => typeof i === "string" ? i.trim() : i?.what?.trim()) : false)
+    );
+    if (!hasContent && key !== "overview") continue;
+
+    children.push(sectionHeading(sec.title));
+
+    // ── Overview: metadata ───────────────────────────────────────────────────
+    if (key === "overview") {
+      if (sData.category)  children.push(metaLine("Category", sData.category));
+      if (sData.owner)     children.push(metaLine("Owner", sData.owner));
+      if (sData.executor)  children.push(metaLine("Executor", sData.executor));
+      if (sData.frequency) children.push(metaLine("Frequency", sData.frequency));
+      continue;
+    }
+
+    // ── Process (detailedSteps + bigPicture phases) ──────────────────────────
+    if (key === "detailedSteps") {
+      const steps = sData.steps || [];
+      const phases = data.bigPicture?.flowSteps || [];
+      steps.forEach((step, i) => {
+        if (!step?.what?.trim()) return;
+        if (phases[i]) {
+          children.push(
+            new Paragraph({
+              children: [new TextRun({ text: `PART ${i + 1} — ${String(phases[i]).trim()}`, bold: true, size: 22, color: "333333" })],
+              spacing: sp(280, 100),
+            })
+          );
+        }
+        children.push(bodyParagraph(step.what));
+        const metaParts = [
+          step.tools ? `Tools: ${step.tools}` : "",
+          step.time  ? `Time: ${step.time}`   : "",
+        ].filter(Boolean).join(" · ");
+        if (metaParts) {
+          children.push(
+            new Paragraph({
+              children: [new TextRun({ text: metaParts, italics: true, size: 18, color: "999999" })],
+              spacing: sp(0, 200),
+            })
+          );
+        }
+      });
+      continue;
+    }
+
+    // ── BigPicture standalone (no detailed steps) ────────────────────────────
+    if (key === "bigPicture") {
+      const hasDetailedSteps = (data.detailedSteps?.steps || []).some(s => s?.what?.trim());
+      if (hasDetailedSteps) continue;
+      const flowSteps = (sData.flowSteps || []).filter(v => typeof v === "string" && v.trim());
+      flowSteps.forEach((step, i) => {
+        children.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: `${i + 1}.  `, bold: true, color: aHex, size: 20 }),
+              new TextRun({ text: step, size: 20, color: "333333" }),
+            ],
+            spacing: sp(0, 100),
+            indent: { left: 360 },
+          })
+        );
+      });
+      continue;
+    }
+
+    // ── Standard sections: use AI paragraph or fall back to fields ───────────
+    if (paragraphs[key]) {
+      children.push(bodyParagraph(paragraphs[key]));
+      // Still render any bullet lists
+      for (const field of sec.fields) {
+        if (field.type !== "bulletlist") continue;
+        const val = sData[field.key];
+        const items = Array.isArray(val) ? val.filter(v => typeof v === "string" && v.trim()) : [];
+        items.forEach(item => children.push(bulletItem(item)));
+      }
+    } else {
+      for (const field of sec.fields) {
+        const val = sData[field.key];
+        if (!val) continue;
+        if (field.type === "bulletlist") {
+          const items = Array.isArray(val) ? val.filter(v => typeof v === "string" && v.trim()) : [];
+          items.forEach(item => children.push(bulletItem(item)));
+          continue;
+        }
+        if (typeof val === "string" && val.trim()) {
+          children.push(bodyParagraph(val));
+        }
+      }
+    }
+  }
+
+  // ── Build document ─────────────────────────────────────────────────────────
+  const doc = new Document({
+    sections: [{
+      headers: { default: pageHeader },
+      footers: { default: pageFooter },
+      properties: {
+        page: { margin: { top: 1200, right: 1440, bottom: 1200, left: 1440 } },
+      },
+      children,
+    }],
+  });
+
   const blob = await Packer.toBlob(doc);
-  const filename = `SOP_${(data.overview?.sopTitle || "document").replace(/\s+/g, "_")}.docx`;
-  saveAs(blob, filename);
+  const safeName = title.replace(/[^a-zA-Z0-9\s-]/g, "").replace(/\s+/g, "_");
+  saveAs(blob, `SOP_${safeName}.docx`);
+}
+
+function buildToolMap(data) {
+  const toolMap = new Map();
+  const phases = data.bigPicture?.flowSteps || [];
+  (data.detailedSteps?.steps || []).forEach((step, idx) => {
+    if (!step?.tools) return;
+    const phaseName = phases[idx] ? String(phases[idx]).trim() : null;
+    step.tools.split(",").forEach(raw => {
+      const name = raw.trim();
+      if (!name) return;
+      const key = name.toLowerCase();
+      if (!toolMap.has(key)) toolMap.set(key, { display: name, phases: new Set() });
+      if (phaseName) toolMap.get(key).phases.add(phaseName);
+    });
+  });
+  const connected = data.aiAutomation?.connectedTools || "";
+  if (connected) {
+    connected.split(",").forEach(raw => {
+      const name = raw.trim();
+      if (!name) return;
+      const key = name.toLowerCase();
+      if (!toolMap.has(key)) toolMap.set(key, { display: name, phases: new Set() });
+    });
+  }
+  return toolMap;
 }

@@ -11,11 +11,11 @@ async function polishData(data, sectionKeys) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ data, sectionKeys }),
     });
-    if (!res.ok) return data;
+    if (!res.ok) return { data, paragraphs: {} };
     const json = await res.json();
-    return json.data || data;
+    return { data: json.data || data, paragraphs: json.paragraphs || {} };
   } catch {
-    return data;
+    return { data, paragraphs: {} };
   }
 }
 
@@ -44,13 +44,13 @@ export default function ExportBar({ data, brand, sopType }) {
   const handleConfirmExport = async () => {
     setShowConfirm(false);
     setStatus("polishing");
-    const polished = await polishData(data, sectionKeys);
+    const { data: polished, paragraphs } = await polishData(data, sectionKeys);
     setStatus("generating");
     try {
       if (pendingFormat === "pdf") {
-        await exportToPDF(polished, brand, isPro);
+        await exportToPDF(polished, brand, isPro, paragraphs);
       } else if (pendingFormat === "docx") {
-        await exportToDOCX(polished, brand, isPro);
+        await exportToDOCX(polished, brand, isPro, paragraphs);
       }
     } catch (err) {
       console.error(`Export error (${pendingFormat}):`, err);

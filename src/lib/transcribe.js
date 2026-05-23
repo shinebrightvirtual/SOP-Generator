@@ -96,8 +96,13 @@ export async function transcribeVideoFile(videoFile) {
     body: formData,
   });
 
+  if (response.status === 503) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || "Video transcription isn't set up yet. A DEEPGRAM_API_KEY needs to be added to Vercel to enable this feature.");
+  }
   if (!response.ok) {
-    throw new Error(`Transcription failed: ${response.statusText}`);
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || `Transcription failed: ${response.statusText}`);
   }
 
   const data = await response.json();
