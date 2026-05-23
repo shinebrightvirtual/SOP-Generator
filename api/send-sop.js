@@ -37,7 +37,9 @@ export default async function handler(req, res) {
               or drop it straight into your systems.
             </p>
             <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #555;">
-              If you want to update it down the track, just head back to the tool and rebuild it any time.
+              If you want to update it down the track, just
+              <a href="https://tools.shinebrightvirtual.com" style="color: #C49A3C; text-decoration: none; font-weight: 600;">head back to the tool</a>
+              and rebuild it any time.
             </p>
             <div style="border-top: 1px solid #e8e5e0; padding-top: 20px; font-size: 13px; color: #999;">
               Sent by <a href="https://shinebrightvirtual.com" style="color: #C49A3C; text-decoration: none;">Shine Bright Virtual</a>
