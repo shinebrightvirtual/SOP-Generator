@@ -4,6 +4,7 @@ import { S } from "../styles/theme.js";
 import { extractSOPFromTranscript } from "../lib/ai-extract.js";
 import { EXAMPLE_DATA, EXAMPLE_BRAND } from "../lib/example-data.js";
 import PreviewPanel from "./PreviewPanel.jsx";
+import SiteNav from "./SiteNav.jsx";
 
 export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }) {
   const [sopType, setSopType] = useState(null);
@@ -95,19 +96,8 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
         </div>
       )}
 
-      {/* Header — hidden when embedded in Squarespace via ?embed=1 */}
-      {!isEmbedded && (
-        <div style={{ background: gradients.header, padding: "18px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
-          <div style={{
-            position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
-            backgroundImage: "radial-gradient(circle, rgba(196,154,60,0.1) 1px, transparent 1px)",
-            backgroundSize: "18px 18px", pointerEvents: "none",
-          }} />
-          <div style={{ fontSize: "20px", fontWeight: typography.weights.bold, color: colors.white, position: "relative", zIndex: 1, fontFamily: typography.fontFamily }}>
-            <span style={{ color: colors.accent }}>Shine Bright</span> SOP Generator
-          </div>
-        </div>
-      )}
+      {/* Site nav — shown on standalone tool, hidden when embedded in Squarespace */}
+      {!isEmbedded && <SiteNav />}
 
       {/* Content */}
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 16px" }}>

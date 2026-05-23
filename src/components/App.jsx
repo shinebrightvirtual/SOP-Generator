@@ -5,6 +5,7 @@ import { typography } from "../styles/theme.js";
 
 import WelcomeScreen from "./WelcomeScreen.jsx";
 import Header from "./Header.jsx";
+import SiteNav from "./SiteNav.jsx";
 import SectionNav from "./SectionNav.jsx";
 import AIReviewFlow from "./AIReviewFlow.jsx";
 import ManualEditor from "./ManualEditor.jsx";
@@ -125,7 +126,7 @@ export default function App() {
 
   return (
     <div style={{ ...S.app, background: isEmbedded ? "#EBE6E3" : S.app.background }}>
-      {!isEmbedded && <Header businessName={brand.businessName} sopType={sopType} onChangeSopType={setSopType} />}
+      {!isEmbedded && <SiteNav />}
 
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "20px 16px 0" }}>
         <div style={{ ...S.tabRow, justifyContent: "center", marginBottom: "24px" }}>
