@@ -1,9 +1,6 @@
 /**
  * Shine Bright SOP Framework — Section Definitions
  *
- * This is the core data structure that defines all 9 sections of the
- * Shine Bright SOP Framework, their fields, types, and tier access.
- *
  * Original work of Shine Bright Virtual / Shine Designs LLC.
  */
 
@@ -26,14 +23,8 @@ export const SECTIONS = {
       {
         key: "category",
         label: "What area of the business is it for?",
-        type: "select",
-        options: [
-          "Operations",
-          "Client Experience",
-          "Marketing",
-          "Finance",
-          "Team",
-        ],
+        type: "text",
+        placeholder: "e.g., Operations, Client Experience, Finance, Marketing, Team",
       },
       {
         key: "owner",
@@ -62,12 +53,6 @@ export const SECTIONS = {
           "Triggered by event",
         ],
       },
-      {
-        key: "status",
-        label: "Where is this SOP at?",
-        type: "select",
-        options: ["Draft", "Active", "Needs Review", "Archived"],
-      },
       { key: "versionDate", label: "Version Date", type: "date" },
       { key: "nextReview", label: "Next Review Date", type: "date" },
     ],
@@ -87,7 +72,7 @@ export const SECTIONS = {
         label: "Why does this process exist? Was there something that happened that made you create it?",
         type: "textarea",
         placeholder:
-          "e.g., We kept dropping the ball on client handoffs when someone was out sick — so we documented it.",
+          "e.g., We would forget to send some of the onboarding paperwork to new clients",
       },
       {
         key: "desiredOutcome",
@@ -100,7 +85,7 @@ export const SECTIONS = {
         label: "What happens if someone skips this?",
         type: "textarea",
         placeholder:
-          "The real impact — on clients, the team, or the business — of not following this...",
+          "The real impact on clients, the team, or the business of not following this...",
       },
     ],
   },
@@ -148,7 +133,7 @@ export const SECTIONS = {
     id: "bigPicture",
     num: 4,
     title: "The Overview",
-    subtitle: "Just the big chunks — we'll get into the detail in the next section.",
+    subtitle: "Just the big chunks. We'll get into the detail in the next section.",
     basic: true,
     aiPrompt:
       "Extract: the 5-7 major phases of this process as a high-level numbered flow.",
@@ -184,7 +169,7 @@ export const SECTIONS = {
     id: "decisions",
     num: 6,
     title: "Decisions",
-    subtitle: "Where the judgment calls live — so nobody's left guessing.",
+    subtitle: "Where the judgment calls live, so nobody's left guessing.",
     basic: false,
     aiPrompt:
       "Extract: decisions that can be made independently, those needing approval, what to do if info is missing, and escalation contacts.",
@@ -220,28 +205,16 @@ export const SECTIONS = {
     id: "doneRight",
     num: 7,
     title: "Getting It Right",
-    subtitle: "How you know it's actually finished — not just technically done.",
+    subtitle: "Before you call this done, what do you always check?",
     basic: false,
     aiPrompt:
-      "Extract: definition of done, quality checklist items, and common mistakes to avoid.",
+      "Extract: quality checklist items that confirm this process was completed properly.",
     fields: [
       {
-        key: "completionCriteria",
-        label: "How do you know this was done properly, not just done?",
-        type: "textarea",
-        placeholder: "Be specific — what does truly done look like?",
-      },
-      {
         key: "qualityChecklist",
-        label: "Are there certain checkpoints you'd want someone to hit?",
+        label: "Before you call this done, what do you always check?",
         type: "bulletlist",
         placeholder: "e.g., Confirmation email sent, file saved to the right folder, client notified...",
-      },
-      {
-        key: "commonMistakes",
-        label: "If this goes wrong, what are usually the reasons?",
-        type: "bulletlist",
-        placeholder: "The things that tend to trip people up...",
       },
     ],
   },
@@ -250,23 +223,30 @@ export const SECTIONS = {
     id: "aiAutomation",
     num: 8,
     title: "Tools & Automation",
-    subtitle: "Where technology supports this process — and where it shouldn't.",
+    subtitle: "Where technology supports this process, and where it shouldn't.",
     basic: false,
     aiPrompt:
       "Extract: where AI or automation could support this, guardrails, human review points, and connected tools.",
     fields: [
       {
+        key: "hasAutomation",
+        label: "AI or automation is part of this process",
+        type: "checkbox",
+      },
+      {
         key: "aiUsage",
-        label: "Where does AI or automation already help with this, if at all?",
+        label: "Where does AI or automation help with this?",
         type: "textarea",
         placeholder:
           "e.g., AI drafts the initial copy, Zapier sends the notification...",
+        conditional: "hasAutomation",
       },
       {
         key: "aiGuardrails",
-        label: "What should never be left to a tool — and where do you need a real person involved?",
+        label: "What should never be left to a tool, and where do you need a real person involved?",
         type: "textarea",
         placeholder: "The parts that need a human eye, judgment, or sign-off...",
+        conditional: "hasAutomation",
       },
       {
         key: "connectedTools",
@@ -274,6 +254,7 @@ export const SECTIONS = {
         type: "text",
         placeholder:
           "e.g., Zapier, ChatGPT, Slack, Airtable, ClickUp...",
+        conditional: "hasAutomation",
       },
     ],
   },
@@ -282,7 +263,7 @@ export const SECTIONS = {
     id: "evolution",
     num: 9,
     title: "Keeping It Current",
-    subtitle: "How this SOP stays alive and useful over time.",
+    subtitle: "How this SOP stays relevant and useful.",
     basic: false,
     aiPrompt:
       "Extract: metrics to monitor, who reviews, how feedback is logged, and revision triggers.",
@@ -324,9 +305,6 @@ export const SECTIONS = {
   },
 };
 
-/**
- * Section display order
- */
 export const SECTION_ORDER = [
   "overview",
   "whyItMatters",

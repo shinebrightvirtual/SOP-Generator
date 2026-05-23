@@ -6,7 +6,6 @@ import { typography } from "../styles/theme.js";
 import WelcomeScreen from "./WelcomeScreen.jsx";
 import Header from "./Header.jsx";
 import SectionNav from "./SectionNav.jsx";
-import VideoImportPanel from "./VideoImportPanel.jsx";
 import AIReviewFlow from "./AIReviewFlow.jsx";
 import ManualEditor from "./ManualEditor.jsx";
 import PreviewPanel from "./PreviewPanel.jsx";
@@ -19,6 +18,7 @@ const DEFAULT_BRAND = {
   primaryColor: "#2D3526",
   accentColor: "#C49A3C",
   businessName: "",
+  createdBy: "",
 };
 
 export default function App() {
@@ -42,8 +42,8 @@ export default function App() {
 
   const sectionKeys = getSectionsForType(sopType);
 
-  const handleStart = ({ businessName, sopType: type }) => {
-    setBrand(b => ({ ...b, businessName }));
+  const handleStart = ({ businessName, createdBy, sopType: type }) => {
+    setBrand(b => ({ ...b, businessName, createdBy }));
     setSopType(type);
     setAppStage("editor");
   };
@@ -100,7 +100,13 @@ export default function App() {
   const currentData = aiMode ? aiData : data;
 
   if (appStage === "welcome") {
-    return <WelcomeScreen onStart={handleStart} initialBusinessName={brand.businessName} />;
+    return (
+      <WelcomeScreen
+        onStart={handleStart}
+        onTranscriptReady={handleTranscriptReady}
+        initialBusinessName={brand.businessName}
+      />
+    );
   }
 
   return (
@@ -108,7 +114,7 @@ export default function App() {
       <Header businessName={brand.businessName} sopType={sopType} onChangeSopType={setSopType} />
 
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "0 16px" }}>
-        <div style={S.tabRow}>
+        <div style={{ ...S.tabRow, justifyContent: "center" }}>
           <button style={S.tab(activeView === "editor")} onClick={() => setActiveView("editor")}>
             {aiMode ? "Review" : "Editor"}
           </button>
@@ -131,10 +137,6 @@ export default function App() {
       )}
 
       <div style={S.main}>
-        {activeView === "editor" && !aiMode && (
-          <VideoImportPanel onTranscriptReady={handleTranscriptReady} />
-        )}
-
         {activeView === "editor" && aiMode && (
           <AIReviewFlow
             aiData={aiData}

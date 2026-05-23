@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { colors, typography, radii, shadows, gradients } from "../lib/constants.js";
 import { S } from "../styles/theme.js";
+import { extractSOPFromTranscript } from "../lib/ai-extract.js";
+import { transcribeVideoFile } from "../lib/transcribe.js";
 
-export default function WelcomeScreen({ onStart, initialBusinessName }) {
+export default function WelcomeScreen({ onStart, onTranscriptReady, initialBusinessName }) {
+  const [createdBy, setCreatedBy] = useState("");
   const [businessName, setBusinessName] = useState(initialBusinessName || "");
   const [sopType, setSopType] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [processStatus, setProcessStatus] = useState("");
+  const [uploadError, setUploadError] = useState("");
+  const fileRef = useRef(null);
 
-  const canContinue = sopType !== null;
+  const canContinue = sopType !== null && !processing;
 
   const cardStyle = {
     background: colors.cardBg,
@@ -28,6 +35,28 @@ export default function WelcomeScreen({ onStart, initialBusinessName }) {
     fontFamily: typography.fontFamily,
     width: "100%",
   });
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadError("");
+    setProcessing(true);
+    setProcessStatus("Transcribing your recording...");
+    try {
+      const transcript = await transcribeVideoFile(file);
+      setProcessStatus("Building your SOP draft...");
+      const parsed = await extractSOPFromTranscript(transcript);
+      setProcessStatus("Done! Loading your draft...");
+      await new Promise(r => setTimeout(r, 500));
+      const type = sopType || "basic";
+      onStart({ businessName, createdBy, sopType: type });
+      onTranscriptReady(parsed);
+    } catch (err) {
+      setUploadError(err.message || "Could not process the recording. Please try again.");
+      setProcessing(false);
+      setProcessStatus("");
+    }
+  };
 
   return (
     <div style={{ minHeight: "100vh", background: colors.pageBg, display: "flex", flexDirection: "column" }}>
@@ -58,6 +87,20 @@ export default function WelcomeScreen({ onStart, initialBusinessName }) {
             </p>
           </div>
 
+          {/* Your name */}
+          <div style={cardStyle}>
+            <label style={{ display: "block", fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "10px" }}>
+              What is your name?
+            </label>
+            <input
+              style={{ ...S.input, fontSize: "15px", padding: "11px 14px" }}
+              placeholder="e.g., Jess McKnight"
+              value={createdBy}
+              onChange={e => setCreatedBy(e.target.value)}
+              autoFocus
+            />
+          </div>
+
           {/* Business name */}
           <div style={cardStyle}>
             <label style={{ display: "block", fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "10px" }}>
@@ -68,11 +111,7 @@ export default function WelcomeScreen({ onStart, initialBusinessName }) {
               placeholder="e.g., Shine Bright Virtual"
               value={businessName}
               onChange={e => setBusinessName(e.target.value)}
-              autoFocus
             />
-            <div style={{ fontSize: "12px", color: colors.textFaint, marginTop: "8px" }}>
-              This will show up on your exported SOP — skip it if you're just exploring.
-            </div>
           </div>
 
           {/* SOP type */}
@@ -106,13 +145,49 @@ export default function WelcomeScreen({ onStart, initialBusinessName }) {
                   </div>
                 </div>
               </button>
-
             </div>
+          </div>
+
+          {/* Video upload */}
+          <div style={{ ...cardStyle, background: gradients.warmBg, border: `1.5px solid ${colors.borderWarm}` }}>
+            <div style={{ fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "6px" }}>
+              Have a recording of yourself doing this?
+            </div>
+            <div style={{ fontSize: "13px", color: colors.textMuted, marginBottom: "14px", lineHeight: 1.6 }}>
+              Upload a downloaded video of you walking through the process — we'll use AI to draft your SOP automatically. You'll review everything before it's final.
+            </div>
+
+            {uploadError && (
+              <div style={{ padding: "10px 14px", borderRadius: "10px", background: colors.dangerBg, color: colors.danger, fontSize: "12px", marginBottom: "12px" }}>
+                {uploadError}
+              </div>
+            )}
+
+            {processing ? (
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 0" }}>
+                <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: colors.accent, animation: "pulse 1.2s ease-in-out infinite", flexShrink: 0 }} />
+                <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }`}</style>
+                <span style={{ fontSize: "13px", color: colors.textSecondary, fontWeight: typography.weights.medium }}>{processStatus}</span>
+              </div>
+            ) : (
+              <>
+                <input type="file" ref={fileRef} accept="video/*" style={{ display: "none" }} onChange={handleFileUpload} />
+                <button
+                  style={{ ...S.uploadVideoBtn, width: "100%", justifyContent: "center" }}
+                  onClick={() => fileRef.current?.click()}
+                >
+                  Upload a video file
+                </button>
+                <div style={{ fontSize: "11px", color: colors.textFaint, marginTop: "8px", textAlign: "center" }}>
+                  MP4, MOV, or similar — downloaded recordings only, not links
+                </div>
+              </>
+            )}
           </div>
 
           {/* CTA */}
           <button
-            onClick={() => canContinue && onStart({ businessName, sopType })}
+            onClick={() => canContinue && onStart({ businessName, createdBy, sopType })}
             disabled={!canContinue}
             style={{
               width: "100%", padding: "15px", borderRadius: "12px", border: "none",
@@ -123,12 +198,8 @@ export default function WelcomeScreen({ onStart, initialBusinessName }) {
               boxShadow: canContinue ? "0 4px 14px rgba(45,53,38,0.25)" : "none",
             }}
           >
-            {canContinue ? "Let's get started →" : "Choose a style above to continue"}
+            {canContinue ? "Let's get started" : "Choose a style above to continue"}
           </button>
-
-          <div style={{ textAlign: "center", marginTop: "16px", fontSize: "12px", color: colors.textFaint }}>
-            Fill in as little or as much as you have — nothing is required.
-          </div>
 
         </div>
       </div>

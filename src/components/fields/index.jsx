@@ -4,8 +4,9 @@ import SelectField from "./SelectField.jsx";
 import StepListField from "./StepListField.jsx";
 import DetailedStepsField from "./DetailedStepsField.jsx";
 import BulletListField from "./BulletListField.jsx";
+import CheckboxField from "./CheckboxField.jsx";
 
-export { TextField, TextareaField, SelectField, StepListField, DetailedStepsField, BulletListField };
+export { TextField, TextareaField, SelectField, StepListField, DetailedStepsField, BulletListField, CheckboxField };
 
 export function renderField(field, data, onChange, context = {}) {
   const val = data[field.key];
@@ -23,6 +24,8 @@ export function renderField(field, data, onChange, context = {}) {
       return <DetailedStepsField key={field.key} field={field} value={val} onChange={onChange} context={context} />;
     case "bulletlist":
       return <BulletListField key={field.key} field={field} value={val} onChange={onChange} />;
+    case "checkbox":
+      return <CheckboxField key={field.key} field={field} value={val} onChange={onChange} />;
     default:
       return null;
   }

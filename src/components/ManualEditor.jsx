@@ -1,20 +1,59 @@
+import { useState } from "react";
 import { SECTIONS } from "../lib/sections.js";
 import { S, colors, typography, radii, gradients } from "../styles/theme.js";
 import { renderField } from "./fields/index.jsx";
-
-const encouragement = [
-  "You're doing great — keep going!",
-  "Nice work. One section at a time.",
-  "This is the most important part — take your time.",
-  "Almost there!",
-  "You're building something really solid here.",
-];
 
 export default function ManualEditor({ activeSection, sectionKeys, data, onFieldChange, onNext, onPrev }) {
   const section = SECTIONS[activeSection];
   const currentIdx = sectionKeys.indexOf(activeSection);
   const isFirst = currentIdx === 0;
   const isLast = currentIdx === sectionKeys.length - 1;
+
+  const [suggestions, setSuggestions] = useState([]);
+  const [suggestLoading, setSuggestLoading] = useState(false);
+
+  const sectionData = data[activeSection] || {};
+
+  const handleSuggestSteps = async () => {
+    setSuggestLoading(true);
+    setSuggestions([]);
+    try {
+      const res = await fetch("/api/suggest-steps", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: data.overview?.sopTitle || "",
+          category: data.overview?.category || "",
+          steps: sectionData.flowSteps || [],
+        }),
+      });
+      const json = await res.json();
+      setSuggestions(json.suggestions || []);
+    } catch {
+      setSuggestions([]);
+    } finally {
+      setSuggestLoading(false);
+    }
+  };
+
+  const acceptSuggestion = (suggestion) => {
+    const current = sectionData.flowSteps || [""];
+    const filtered = current.filter(s => s.trim());
+    onFieldChange(activeSection, "flowSteps", [...filtered, suggestion]);
+    setSuggestions(prev => prev.filter(s => s !== suggestion));
+  };
+
+  const renderFields = () => {
+    return section.fields.map(field => {
+      if (field.conditional && !sectionData[field.conditional]) return null;
+      return renderField(
+        field,
+        sectionData,
+        (key, val) => onFieldChange(activeSection, key, val),
+        activeSection === "detailedSteps" ? { flowSteps: data.bigPicture?.flowSteps } : {}
+      );
+    });
+  };
 
   return (
     <div>
@@ -35,20 +74,50 @@ export default function ManualEditor({ activeSection, sectionKeys, data, onField
         <h2 style={S.secTitle}>{section.title}</h2>
         <p style={S.secSub}>{section.subtitle}</p>
 
-        {/* Fields */}
-        {section.fields.map(field =>
-          renderField(
-            field,
-            data[activeSection] || {},
-            (key, val) => onFieldChange(activeSection, key, val),
-            activeSection === "detailedSteps" ? { flowSteps: data.bigPicture?.flowSteps } : {}
-          )
-        )}
+        {renderFields()}
 
-        {/* Skip hint */}
-        <div style={{ marginTop: "8px", fontSize: typography.sizes.caption, color: colors.textFaint, textAlign: "center" }}>
-          Not sure? Leave it blank — you can always come back and fill it in later.
-        </div>
+        {/* Section 4: suggest missing steps */}
+        {activeSection === "bigPicture" && (
+          <div style={{ marginTop: "8px" }}>
+            <button
+              onClick={handleSuggestSteps}
+              disabled={suggestLoading}
+              style={{
+                padding: "9px 18px", borderRadius: radii.lg, border: `1.5px solid ${colors.accent}`,
+                background: "transparent", color: colors.accentDark, fontSize: typography.sizes.body2,
+                fontWeight: typography.weights.semibold, cursor: suggestLoading ? "default" : "pointer",
+                fontFamily: typography.fontFamily, opacity: suggestLoading ? 0.6 : 1,
+              }}
+            >
+              {suggestLoading ? "Checking..." : "Check for missing steps"}
+            </button>
+
+            {suggestions.length > 0 && (
+              <div style={{ marginTop: "12px" }}>
+                <div style={{ fontSize: typography.sizes.body2, color: colors.textMuted, marginBottom: "8px" }}>
+                  You might also want to include:
+                </div>
+                {suggestions.map((s, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px", padding: "10px 14px", background: "#F7F5F0", borderRadius: radii.lg, border: `1px solid ${colors.border}` }}>
+                    <span style={{ flex: 1, fontSize: typography.sizes.body, color: colors.textPrimary }}>{s}</span>
+                    <button
+                      onClick={() => acceptSuggestion(s)}
+                      style={{ padding: "5px 12px", borderRadius: radii.md, border: "none", background: colors.primary, color: colors.white, fontSize: typography.sizes.caption, fontWeight: typography.weights.semibold, cursor: "pointer", fontFamily: typography.fontFamily, whiteSpace: "nowrap" }}
+                    >
+                      Add this
+                    </button>
+                    <button
+                      onClick={() => setSuggestions(prev => prev.filter(x => x !== s))}
+                      style={{ padding: "5px 10px", borderRadius: radii.md, border: `1px solid ${colors.border}`, background: "transparent", color: colors.textFaint, fontSize: typography.sizes.caption, cursor: "pointer", fontFamily: typography.fontFamily }}
+                    >
+                      Skip
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Prev / Next navigation */}
@@ -63,14 +132,12 @@ export default function ManualEditor({ activeSection, sectionKeys, data, onField
             cursor: isFirst ? "default" : "pointer", fontFamily: typography.fontFamily,
           }}
         >
-          ← Back
+          Back
         </button>
 
         {isLast ? (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
-            <div style={{ fontSize: typography.sizes.caption, color: colors.success, fontWeight: typography.weights.semibold }}>
-              ✓ All sections complete — ready to export!
-            </div>
+          <div style={{ fontSize: typography.sizes.caption, color: colors.success, fontWeight: typography.weights.semibold }}>
+            All sections complete — ready to export!
           </div>
         ) : (
           <button

@@ -28,6 +28,7 @@ export const S = {
   navBar: {
     display: "flex", gap: "2px", padding: "10px 16px", background: colors.white,
     borderBottom: `1px solid ${colors.border}`, overflowX: "auto", position: "sticky", top: 0, zIndex: 100,
+    justifyContent: "center", flexWrap: "wrap",
   },
   navItem: (active) => ({
     padding: "7px 12px", borderRadius: radii.md, fontSize: typography.sizes.sm, fontWeight: active ? typography.weights.semibold : typography.weights.medium,
