@@ -66,7 +66,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: isEmbedded ? "transparent" : colors.pageBg, display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", background: isEmbedded ? "#EBE6E3" : colors.pageBg, display: "flex", flexDirection: "column" }}>
       {/* Example preview modal */}
       {exampleType && (
         <div style={{

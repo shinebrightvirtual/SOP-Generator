@@ -124,7 +124,7 @@ export default function App() {
   }
 
   return (
-    <div style={{ ...S.app, background: isEmbedded ? "transparent" : S.app.background }}>
+    <div style={{ ...S.app, background: isEmbedded ? "#EBE6E3" : S.app.background }}>
       {!isEmbedded && <Header businessName={brand.businessName} sopType={sopType} onChangeSopType={setSopType} />}
 
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "20px 16px 0" }}>
