@@ -232,10 +232,10 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
           </div>
         ) : (
           <>
-            <button style={btnStyle(false)} onClick={() => handleExportClick("pdf")} disabled={busy}>
+            <button style={btnStyle(true)} onClick={() => handleExportClick("pdf")} disabled={busy}>
               Export PDF
             </button>
-            <button style={btnStyle(true)} onClick={() => handleExportClick("docx")} disabled={busy}>
+            <button style={btnStyle(false)} onClick={() => handleExportClick("docx")} disabled={busy}>
               Word / Google Docs
             </button>
             <div style={{ fontSize: typography.sizes.caption, color: colors.textFaint, display: "flex", alignItems: "center" }}>

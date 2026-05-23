@@ -8,8 +8,7 @@ import {
   Header,
   Footer,
   PageNumber,
-  TabStopType,
-  TabStopLeader,
+  ImageRun,
 } from "docx";
 import { saveAs } from "file-saver";
 import { SECTIONS, SECTION_ORDER } from "./sections.js";
@@ -43,12 +42,11 @@ export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
       new Paragraph({
         children: [
           new TextRun({ text: "STANDARD OPERATING PROCEDURE", size: 14, color: "999999" }),
-          new TextRun({ text: "\t", size: 14 }),
+          new TextRun({ text: "   —   ", size: 14, color: "CCCCCC" }),
           new TextRun({ text: title, size: 14, color: "999999" }),
         ],
         border: rule("CCCCCC"),
         spacing: sp(0, 60),
-        tabStops: [{ type: TabStopType.RIGHT, position: 9200 }],
       }),
     ],
   });
@@ -70,6 +68,35 @@ export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
   });
 
   const children = [];
+
+  // ── Logo (if provided) ─────────────────────────────────────────────────────
+  if (brand.logo) {
+    try {
+      const base64 = brand.logo.split(",")[1];
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      // Derive pixel dimensions from a temporary Image element
+      const dims = await new Promise((res) => {
+        const img = new Image();
+        img.onload = () => res({ w: img.naturalWidth, h: img.naturalHeight });
+        img.onerror = () => res(null);
+        img.src = brand.logo;
+      });
+      if (dims) {
+        const maxH = 60, maxW = 160; // pixels (72dpi-ish for doc)
+        const ratio = dims.w / dims.h;
+        let lh = maxH, lw = lh * ratio;
+        if (lw > maxW) { lw = maxW; lh = lw / ratio; }
+        children.push(
+          new Paragraph({
+            children: [new ImageRun({ data: bytes, transformation: { width: Math.round(lw), height: Math.round(lh) } })],
+            spacing: sp(0, 160),
+          })
+        );
+      }
+    } catch {}
+  }
 
   // ── Title block ────────────────────────────────────────────────────────────
   children.push(

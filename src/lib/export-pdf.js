@@ -90,6 +90,16 @@ function collectTools(data) {
   return toolMap;
 }
 
+// ─── IMAGE DIMENSIONS ─────────────────────────────────────────────────────────
+function getImageDimensions(dataUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
+}
+
 // ─── MAIN EXPORT ──────────────────────────────────────────────────────────────
 export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
@@ -162,6 +172,21 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
 
   // ─── PAGE 1: draw running header ────────────────────────────────────────────
   drawRunningHeader();
+
+  // ─── LOGO (top-left before title, if provided) ──────────────────────────────
+  if (brand.logo) {
+    try {
+      const dims = await getImageDimensions(brand.logo);
+      if (dims && dims.w && dims.h) {
+        const maxH = 18, maxW = 50;
+        const ratio = dims.w / dims.h;
+        let lh = maxH, lw = lh * ratio;
+        if (lw > maxW) { lw = maxW; lh = lw / ratio; }
+        doc.addImage(brand.logo, "AUTO", ML, y, lw, lh);
+        y += lh + 6;
+      }
+    } catch {}
+  }
 
   // ─── TITLE BLOCK (centered) ─────────────────────────────────────────────────
   // SOP title — bold ~20pt, centered
