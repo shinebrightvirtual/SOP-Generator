@@ -488,4 +488,5 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
   // ─── SAVE ────────────────────────────────────────────────────────────────────
   const safeName = title.replace(/[^a-zA-Z0-9\s-]/g, "").replace(/\s+/g, "_");
   doc.save(`SOP_${safeName}.pdf`);
+  return doc.output("datauristring").split(",")[1]; // base64 for email
 }

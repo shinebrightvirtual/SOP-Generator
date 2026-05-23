@@ -40,6 +40,8 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
   const [pendingFormat, setPendingFormat] = useState(null);
   const [reviewParagraphs, setReviewParagraphs] = useState({});
   const [reviewData, setReviewData] = useState(null);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const logoRef = useRef(null);
 
   const handleLogoUpload = (e) => {
@@ -60,6 +62,11 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
 
   // Step 1: branding confirmed → run AI polish → open review
   const handleConfirmExport = async () => {
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setEmailError("Please enter a valid email address so we can send you a copy.");
+      return;
+    }
+    setEmailError("");
     setShowConfirm(false);
     setStatus("polishing");
     const { data: polished, paragraphs } = await polishData(data, sectionKeys);
@@ -69,15 +76,29 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
     setShowReview(true);
   };
 
-  // Step 2: review confirmed → generate file
+  // Step 2: review confirmed → generate file + email it
   const handleDownload = async () => {
     setShowReview(false);
     setStatus("generating");
     try {
+      let fileData;
       if (pendingFormat === "pdf") {
-        await exportToPDF(reviewData, brand, isPro, reviewParagraphs);
+        fileData = await exportToPDF(reviewData, brand, isPro, reviewParagraphs);
       } else if (pendingFormat === "docx") {
-        await exportToDOCX(reviewData, brand, isPro, reviewParagraphs);
+        fileData = await exportToDOCX(reviewData, brand, isPro, reviewParagraphs);
+      }
+      // Send email copy in the background — don't block the download
+      if (fileData && email.trim()) {
+        fetch("/api/send-sop", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email.trim(),
+            sopTitle: data.overview?.sopTitle || "Standard Operating Procedure",
+            format: pendingFormat,
+            fileData,
+          }),
+        }).catch(() => {}); // silently ignore email failures
       }
     } catch (err) {
       console.error(`Export error (${pendingFormat}):`, err);
@@ -138,6 +159,25 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             <div style={{ marginBottom: "20px" }}>
               <div style={{ fontSize: typography.sizes.body2, fontWeight: typography.weights.bold, color: colors.primary, marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.8px" }}>
                 Your details
+              </div>
+              {/* Email — required */}
+              <div style={{ marginBottom: "10px" }}>
+                <label style={{ ...S.label, marginBottom: "4px" }}>
+                  Email address <span style={{ color: colors.accent }}>*</span>
+                </label>
+                <input
+                  style={{ ...S.input, fontSize: typography.sizes.body, borderColor: emailError ? colors.danger : undefined }}
+                  placeholder="you@yourbusiness.com"
+                  type="email"
+                  value={email}
+                  onChange={e => { setEmail(e.target.value); setEmailError(""); }}
+                />
+                {emailError && (
+                  <div style={{ fontSize: typography.sizes.caption, color: colors.danger, marginTop: "4px" }}>{emailError}</div>
+                )}
+                <div style={{ fontSize: typography.sizes.caption, color: colors.textFaint, marginTop: "4px" }}>
+                  We'll send a copy of your finished SOP to this address.
+                </div>
               </div>
               <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
                 <div style={{ flex: 1 }}>

@@ -311,6 +311,12 @@ export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
   const blob = await Packer.toBlob(doc);
   const safeName = title.replace(/[^a-zA-Z0-9\s-]/g, "").replace(/\s+/g, "_");
   saveAs(blob, `SOP_${safeName}.docx`);
+  const base64 = await new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(",")[1]);
+    reader.readAsDataURL(blob);
+  });
+  return base64; // base64 for email
 }
 
 function buildToolMap(data) {
