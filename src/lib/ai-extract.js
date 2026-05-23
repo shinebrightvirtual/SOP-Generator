@@ -95,20 +95,30 @@ export async function extractSOPFromTranscript(transcript) {
     responseData = await response.json();
   }
 
-  // Parse the response
-  const text = responseData.content
-    .map((item) => item.text || "")
-    .join("\n");
-  const clean = text.replace(/```json|```/g, "").trim();
-  const parsed = JSON.parse(clean);
+  let parsed;
 
-  // Add IDs to detailed steps
-  if (parsed.detailedSteps?.steps) {
-    let stepId = 0;
-    parsed.detailedSteps.steps = parsed.detailedSteps.steps.map((s) => ({
-      ...s,
-      id: `ai-step-${++stepId}`,
-    }));
+  if (isDev) {
+    // Dev: responseData is raw Claude API response — extract text and parse JSON
+    const text = responseData.content
+      .map((item) => item.text || "")
+      .join("\n");
+    const clean = text.replace(/```json|```/g, "").trim();
+    parsed = JSON.parse(clean);
+
+    // Add IDs to detailed steps
+    if (parsed.detailedSteps?.steps) {
+      let stepId = 0;
+      parsed.detailedSteps.steps = parsed.detailedSteps.steps.map((s) => ({
+        ...s,
+        id: `ai-step-${++stepId}`,
+      }));
+    }
+  } else {
+    // Production: serverless function already parsed and returned the SOP object
+    if (responseData.error) {
+      throw new Error(responseData.error);
+    }
+    parsed = responseData;
   }
 
   return parsed;
