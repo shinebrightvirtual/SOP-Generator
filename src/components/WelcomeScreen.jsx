@@ -3,12 +3,15 @@ import { colors, typography, radii, shadows, gradients } from "../lib/constants.
 import { S } from "../styles/theme.js";
 import { extractSOPFromTranscript } from "../lib/ai-extract.js";
 import { transcribeVideoFile } from "../lib/transcribe.js";
+import { EXAMPLE_DATA, EXAMPLE_BRAND } from "../lib/example-data.js";
+import PreviewPanel from "./PreviewPanel.jsx";
 
 export default function WelcomeScreen({ onStart, onTranscriptReady }) {
   const [sopType, setSopType] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [processStatus, setProcessStatus] = useState("");
   const [uploadError, setUploadError] = useState("");
+  const [exampleType, setExampleType] = useState(null); // "basic" | "detailed"
   const fileRef = useRef(null);
 
   const canContinue = sopType !== null && !processing;
@@ -58,6 +61,34 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
 
   return (
     <div style={{ minHeight: "100vh", background: colors.pageBg, display: "flex", flexDirection: "column" }}>
+      {/* Example preview modal */}
+      {exampleType && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 600,
+          display: "flex", alignItems: "flex-start", justifyContent: "center",
+          padding: "40px 16px", overflowY: "auto",
+        }}
+          onClick={() => setExampleType(null)}
+        >
+          <div style={{ maxWidth: "680px", width: "100%", position: "relative" }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+              <div style={{ fontSize: typography.sizes.bodyLg, fontWeight: typography.weights.semibold, color: colors.white }}>
+                Example: {exampleType === "basic" ? "Basic SOP (5 sections)" : "Full Detail SOP (all 9 sections)"}
+              </div>
+              <button
+                onClick={() => setExampleType(null)}
+                style={{ background: "rgba(255,255,255,0.15)", border: "none", color: colors.white, borderRadius: radii.lg, padding: "6px 14px", cursor: "pointer", fontFamily: typography.fontFamily, fontSize: typography.sizes.body }}
+              >
+                Close
+              </button>
+            </div>
+            <PreviewPanel data={EXAMPLE_DATA} brand={EXAMPLE_BRAND} sopType={exampleType} />
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div style={{ background: gradients.header, padding: "18px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
         <div style={{
@@ -96,24 +127,40 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
               <button onClick={() => setSopType("basic")} style={optionBtn(sopType === "basic", colors.primary)}>
-                <div>
-                  <div style={{ fontWeight: typography.weights.bold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "4px" }}>
-                    Basic — the essentials
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: typography.weights.bold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "4px" }}>
+                      Basic — the essentials
+                    </div>
+                    <div style={{ fontSize: "13px", color: colors.textMuted, lineHeight: 1.5 }}>
+                      5 sections: overview, why it matters, when it runs, the big picture, and step-by-step.
+                    </div>
                   </div>
-                  <div style={{ fontSize: "13px", color: colors.textMuted, lineHeight: 1.5 }}>
-                    5 sections: overview, why it matters, when it runs, the big picture, and step-by-step. Great for getting something solid done quickly.
-                  </div>
+                  <button
+                    onClick={e => { e.stopPropagation(); setExampleType("basic"); }}
+                    style={{ marginLeft: "12px", marginTop: "2px", background: "none", border: `1px solid ${colors.border}`, borderRadius: radii.md, padding: "4px 10px", fontSize: typography.sizes.caption, color: colors.textMuted, cursor: "pointer", whiteSpace: "nowrap", fontFamily: typography.fontFamily }}
+                  >
+                    See example
+                  </button>
                 </div>
               </button>
 
               <button onClick={() => setSopType("detailed")} style={optionBtn(sopType === "detailed", colors.accent)}>
-                <div>
-                  <div style={{ fontWeight: typography.weights.bold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "4px" }}>
-                    Full Detail — the complete picture
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: typography.weights.bold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "4px" }}>
+                      Full Detail — the complete picture
+                    </div>
+                    <div style={{ fontSize: "13px", color: colors.textMuted, lineHeight: 1.5 }}>
+                      All 9 sections including decisions, quality checks, tools and automation, and how to keep it updated over time.
+                    </div>
                   </div>
-                  <div style={{ fontSize: "13px", color: colors.textMuted, lineHeight: 1.5 }}>
-                    All 9 sections including decisions, quality checks, tools and automation, and how to keep it updated over time. Great for handing off to a team.
-                  </div>
+                  <button
+                    onClick={e => { e.stopPropagation(); setExampleType("detailed"); }}
+                    style={{ marginLeft: "12px", marginTop: "2px", background: "none", border: `1px solid ${colors.border}`, borderRadius: radii.md, padding: "4px 10px", fontSize: typography.sizes.caption, color: colors.textMuted, cursor: "pointer", whiteSpace: "nowrap", fontFamily: typography.fontFamily }}
+                  >
+                    See example
+                  </button>
                 </div>
               </button>
             </div>

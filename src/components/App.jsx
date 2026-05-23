@@ -9,7 +9,6 @@ import SectionNav from "./SectionNav.jsx";
 import AIReviewFlow from "./AIReviewFlow.jsx";
 import ManualEditor from "./ManualEditor.jsx";
 import PreviewPanel from "./PreviewPanel.jsx";
-import BrandPanel from "./BrandPanel.jsx";
 import ExportBar from "./ExportBar.jsx";
 
 const DEFAULT_BRAND = {
@@ -119,9 +118,6 @@ export default function App() {
           <button style={S.tab(activeView === "preview")} onClick={() => setActiveView("preview")}>
             Preview
           </button>
-          <button style={S.tab(activeView === "brand")} onClick={() => setActiveView("brand")}>
-            Brand
-          </button>
         </div>
       </div>
 
@@ -162,9 +158,6 @@ export default function App() {
           <PreviewPanel data={currentData} brand={brand} sopType={sopType} />
         )}
 
-        {activeView === "brand" && (
-          <BrandPanel brand={brand} setBrand={setBrand} />
-        )}
       </div>
 
       <ExportBar data={currentData} brand={brand} setBrand={setBrand} sopType={sopType} />
