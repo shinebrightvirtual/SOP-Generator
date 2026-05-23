@@ -115,7 +115,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
 
           {/* Greeting */}
           <div style={{ textAlign: "center", marginBottom: "36px" }}>
-            <h1 style={{ fontSize: "30px", fontWeight: typography.weights.bold, color: colors.primary, margin: "0 0 10px", letterSpacing: "-0.5px", fontFamily: typography.fontFamily }}>
+            <h1 style={{ fontSize: "30px", fontWeight: typography.weights.bold, color: isEmbedded ? "#803d1b" : colors.primary, margin: "0 0 10px", letterSpacing: "-0.5px", fontFamily: typography.fontFamily }}>
               Let's build your SOP
             </h1>
             <p style={{ fontSize: "15px", color: colors.textMuted, margin: 0, lineHeight: 1.7 }}>
