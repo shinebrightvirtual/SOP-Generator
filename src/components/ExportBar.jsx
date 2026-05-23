@@ -87,8 +87,9 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
       } else if (pendingFormat === "docx") {
         fileData = await exportToDOCX(reviewData, brand, isPro, reviewParagraphs);
       }
-      // Send email copy in the background — don't block the download
+      // Fire background tasks — don't block the download
       if (fileData && email.trim()) {
+        // Send SOP copy by email
         fetch("/api/send-sop", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -98,7 +99,14 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             format: pendingFormat,
             fileData,
           }),
-        }).catch(() => {}); // silently ignore email failures
+        }).catch(() => {});
+
+        // Add to MailerLite mailing list
+        fetch("/api/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email.trim() }),
+        }).catch(() => {});
       }
     } catch (err) {
       console.error(`Export error (${pendingFormat}):`, err);
