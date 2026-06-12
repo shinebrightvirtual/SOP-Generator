@@ -51,7 +51,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
     if (!transcript.trim()) return;
     setUploadError("");
     setProcessing(true);
-    setProcessStatus("pulling it together..");
+    setProcessStatus("Give me a minute to make it make sense.");
     try {
       const parsed = await extractSOPFromTranscript(transcript);
       setProcessStatus("almost there..");
@@ -106,11 +106,10 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
           {/* Greeting */}
           <div style={{ textAlign: "center", marginBottom: "36px" }}>
             <h1 style={{ fontSize: "30px", fontWeight: typography.weights.bold, color: isEmbedded ? "#803d1b" : colors.primary, margin: "0 0 10px", letterSpacing: "-0.5px", fontFamily: typography.fontFamily }}>
-              let's build your SOP.
+              Let's build your SOP!
             </h1>
             <p style={{ fontSize: "15px", color: colors.textMuted, margin: 0, lineHeight: 1.7 }}>
-              tell us how you do it.<br />
-              we'll turn it into something your team can actually follow.
+              Tell us how you do it and we'll turn it into something your team can actually follow.
             </p>
           </div>
 
@@ -120,7 +119,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
               how detailed do you want to get?
             </div>
             <div style={{ fontSize: "13px", color: colors.textMuted, marginBottom: "16px" }}>
-              you can always add more later. start wherever makes sense.
+              You can always add more later - start wherever makes the most sense for you.
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
@@ -214,7 +213,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
                       fontFamily: typography.fontFamily, transition: "all 0.15s",
                     }}
                   >
-                    build my draft
+                    Create the SOP draft
                   </button>
                   <input type="file" ref={fileRef} accept=".txt,.md,text/plain" style={{ display: "none" }} onChange={handleTranscriptUpload} />
                   <button
@@ -246,7 +245,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
               boxShadow: canContinue ? "0 4px 14px rgba(45,53,38,0.25)" : "none",
             }}
           >
-            {canContinue ? "let's go" : "pick a format above to keep going"}
+            {canContinue ? "Let's do this." : "pick a format above to keep going"}
           </button>
 
         </div>

@@ -119,9 +119,9 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
   const busy = status !== null;
 
   const statusLabel = status === "polishing"
-    ? "cleaning it up.."
+    ? "Give me a minute to make it make sense."
     : status === "generating"
-    ? "building your document.."
+    ? "Building your document."
     : null;
 
   const btnStyle = (primary) => ({
@@ -157,7 +157,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             maxHeight: "90vh", overflowY: "auto",
           }}>
             <h3 style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: typography.weights.bold, color: colors.primary, fontFamily: typography.fontFamily }}>
-              almost there. one more thing.
+              Almost there - one more thing.
             </h3>
             <p style={{ margin: "0 0 20px", fontSize: typography.sizes.body, color: colors.textMuted, lineHeight: 1.6, fontFamily: typography.fontFamily }}>
               these details show up on your finished document.
@@ -283,7 +283,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
                   fontWeight: typography.weights.semibold, cursor: "pointer", fontFamily: typography.fontFamily,
                 }}
               >
-                looks good, let's go
+                Looks good - let's go.
               </button>
             </div>
           </div>
@@ -303,7 +303,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             {/* Header */}
             <div style={{ padding: "22px 24px 16px", borderBottom: `1px solid ${colors.border}`, flexShrink: 0 }}>
               <h3 style={{ margin: "0 0 4px", fontSize: "17px", fontWeight: typography.weights.bold, color: colors.primary, fontFamily: typography.fontFamily }}>
-                take a look before you download.
+                Take a look at these sections before you download.
               </h3>
               <p style={{ margin: 0, fontSize: typography.sizes.body, color: colors.textMuted, lineHeight: 1.5, fontFamily: typography.fontFamily }}>
                 AI wrote these sections out in paragraph form. change anything that doesn't sound right.
@@ -314,7 +314,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             <div style={{ flex: 1, overflowY: "auto", padding: "20px 24px" }}>
               {reviewableSections.length === 0 ? (
                 <p style={{ color: colors.textMuted, fontSize: typography.sizes.body }}>
-                  nothing to review. you're good to go.
+                  Nothing to review - your SOP is good to go.
                 </p>
               ) : (
                 reviewableSections.map(key => (

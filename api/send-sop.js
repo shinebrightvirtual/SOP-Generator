@@ -30,7 +30,7 @@ export default async function handler(req, res) {
             </div>
           </div>
           <div style="background: #fff; padding: 32px; border: 1px solid #e8e5e0; border-top: none; border-radius: 0 0 8px 8px;">
-            <h2 style="margin: 0 0 16px; font-size: 22px; color: #2D3526;">here it is.</h2>
+            <h2 style="margin: 0 0 16px; font-size: 22px; color: #2D3526;">Here's your SOP!</h2>
             <p style="margin: 0 0 12px; font-size: 15px; line-height: 1.6; color: #555;">
               your <strong>${sopTitle || "SOP"}</strong> is done. it's attached - save it, share it with whoever needs it, or drop it straight into your systems.
             </p>
