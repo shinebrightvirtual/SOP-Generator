@@ -54,36 +54,44 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
 
+// ─── SPLIT TOOL LIST (respects commas inside parentheses) ────────────────────
+function splitTools(str) {
+  const parts = [];
+  let depth = 0, current = "";
+  for (const ch of String(str)) {
+    if (ch === "(") depth++;
+    else if (ch === ")") depth--;
+    if (ch === "," && depth === 0) {
+      if (current.trim()) parts.push(current.trim());
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
+}
+
 // ─── COLLECT TOOLS FROM STEPS ─────────────────────────────────────────────────
 function collectTools(data) {
-  const toolMap = new Map(); // toolName (lowercase) -> { display, phases: Set<string> }
-  const phases = data.bigPicture?.flowSteps || [];
-
+  const toolMap = new Map();
   const steps = data.detailedSteps?.steps || [];
-  steps.forEach((step, idx) => {
+  steps.forEach((step) => {
     if (!step?.tools) return;
-    const phaseName = phases[idx] ? String(phases[idx]).trim() : null;
-    step.tools.split(",").forEach(raw => {
-      const name = raw.trim();
+    splitTools(step.tools).forEach(name => {
       if (!name) return;
       const key = name.toLowerCase();
-      if (!toolMap.has(key)) {
-        toolMap.set(key, { display: name, phases: new Set() });
-      }
-      if (phaseName) toolMap.get(key).phases.add(phaseName);
+      if (!toolMap.has(key)) toolMap.set(key, { display: name });
     });
   });
 
   // Also include connectedTools from aiAutomation
   const connected = data.aiAutomation?.connectedTools || "";
   if (connected) {
-    connected.split(",").forEach(raw => {
-      const name = raw.trim();
+    splitTools(connected).forEach(name => {
       if (!name) return;
       const key = name.toLowerCase();
-      if (!toolMap.has(key)) {
-        toolMap.set(key, { display: name, phases: new Set() });
-      }
+      if (!toolMap.has(key)) toolMap.set(key, { display: name });
     });
   }
 
@@ -410,7 +418,7 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
           y = addText(doc, step.what, ML, y, CW, 9, "normal", 1.5);
 
           // Tools + Time italic grey line
-          const toolStr = step.tools ? `Tools: ${step.tools.split(",").map(t => toTitleCase(t.trim())).join(", ")}` : "";
+          const toolStr = step.tools ? `Tools: ${splitTools(step.tools).map(t => toTitleCase(t)).join(", ")}` : "";
           const timeStr = step.time  ? `Time: ${step.time}`   : "";
           const metaStr = [toolStr, timeStr].filter(Boolean).join(" · ");
           if (metaStr) {

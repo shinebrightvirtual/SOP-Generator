@@ -15,6 +15,23 @@ import { SECTIONS, SECTION_ORDER } from "./sections.js";
 
 function hex(h) { return h.replace("#", ""); }
 
+function splitTools(str) {
+  const parts = [];
+  let depth = 0, current = "";
+  for (const ch of String(str)) {
+    if (ch === "(") depth++;
+    else if (ch === ")") depth--;
+    if (ch === "," && depth === 0) {
+      if (current.trim()) parts.push(current.trim());
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
+}
+
 const MINOR = new Set(["a","an","the","and","but","or","for","nor","on","at","to","by","in","of","up","as","with"]);
 function toTitleCase(str) {
   return String(str).split(" ").map((w, i) =>
@@ -318,8 +335,7 @@ function buildToolMap(data) {
   (data.detailedSteps?.steps || []).forEach((step, idx) => {
     if (!step?.tools) return;
     const phaseName = phases[idx] ? String(phases[idx]).trim() : null;
-    step.tools.split(",").forEach(raw => {
-      const name = raw.trim();
+    splitTools(step.tools).forEach(name => {
       if (!name) return;
       const key = name.toLowerCase();
       if (!toolMap.has(key)) toolMap.set(key, { display: name, phases: new Set() });
@@ -328,8 +344,7 @@ function buildToolMap(data) {
   });
   const connected = data.aiAutomation?.connectedTools || "";
   if (connected) {
-    connected.split(",").forEach(raw => {
-      const name = raw.trim();
+    splitTools(connected).forEach(name => {
       if (!name) return;
       const key = name.toLowerCase();
       if (!toolMap.has(key)) toolMap.set(key, { display: name, phases: new Set() });
