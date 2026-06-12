@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     await resend.emails.send({
       from: "Shine Bright Virtual <hello@shinebrightvirtual.com>",
       to: email,
-      subject: `Your SOP is ready: ${sopTitle || "Standard Operating Procedure"}`,
+      subject: `your SOP is ready.`,
       html: `
         <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #333;">
           <div style="background: #2D3526; padding: 24px 32px; border-radius: 8px 8px 0 0;">
@@ -30,19 +30,17 @@ export default async function handler(req, res) {
             </div>
           </div>
           <div style="background: #fff; padding: 32px; border: 1px solid #e8e5e0; border-top: none; border-radius: 0 0 8px 8px;">
-            <h2 style="margin: 0 0 16px; font-size: 22px; color: #2D3526;">Your SOP is attached</h2>
+            <h2 style="margin: 0 0 16px; font-size: 22px; color: #2D3526;">here it is.</h2>
             <p style="margin: 0 0 12px; font-size: 15px; line-height: 1.6; color: #555;">
-              Your <strong>${sopTitle || "Standard Operating Procedure"}</strong> is ready to use.
-              It's attached to this email — save it somewhere handy, share it with your team,
-              or drop it straight into your systems.
+              your <strong>${sopTitle || "SOP"}</strong> is done. it's attached - save it, share it with whoever needs it, or drop it straight into your systems.
             </p>
             <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #555;">
-              If you want to update it down the track, just
-              <a href="https://tools.shinebrightvirtual.com" style="color: #C49A3C; text-decoration: none; font-weight: 600;">head back to the tool</a>
-              and rebuild it any time.
+              if something changes or you want to update it,
+              <a href="https://tools.shinebrightvirtual.com" style="color: #C49A3C; text-decoration: none; font-weight: 600;">head back and rebuild it</a>
+              anytime.
             </p>
             <div style="border-top: 1px solid #e8e5e0; padding-top: 20px; font-size: 13px; color: #999;">
-              Sent by <a href="https://shinebrightvirtual.com" style="color: #C49A3C; text-decoration: none;">Shine Bright Virtual</a>
+              sent by <a href="https://shinebrightvirtual.com" style="color: #C49A3C; text-decoration: none;">Shine Bright Virtual</a>
             </div>
           </div>
         </div>

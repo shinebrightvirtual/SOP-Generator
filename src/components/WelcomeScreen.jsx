@@ -51,16 +51,16 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
     if (!transcript.trim()) return;
     setUploadError("");
     setProcessing(true);
-    setProcessStatus("Building your SOP draft...");
+    setProcessStatus("pulling it together..");
     try {
       const parsed = await extractSOPFromTranscript(transcript);
-      setProcessStatus("Done! Loading your draft...");
+      setProcessStatus("almost there..");
       await new Promise(r => setTimeout(r, 400));
       const type = sopType || "basic";
       onStart({ sopType: type });
       onTranscriptReady(parsed);
     } catch (err) {
-      setUploadError(err.message || "Could not process the transcript. Please try again.");
+      setUploadError(err.message || "something went wrong - try that again.");
       setProcessing(false);
       setProcessStatus("");
     }
@@ -106,21 +106,21 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
           {/* Greeting */}
           <div style={{ textAlign: "center", marginBottom: "36px" }}>
             <h1 style={{ fontSize: "30px", fontWeight: typography.weights.bold, color: isEmbedded ? "#803d1b" : colors.primary, margin: "0 0 10px", letterSpacing: "-0.5px", fontFamily: typography.fontFamily }}>
-              Let's build your SOP
+              let's build your SOP.
             </h1>
             <p style={{ fontSize: "15px", color: colors.textMuted, margin: 0, lineHeight: 1.7 }}>
-              Just answer a few questions about how you do it —<br />
-              we'll turn it into a proper SOP.
+              tell us how you do it.<br />
+              we'll turn it into something your team can actually follow.
             </p>
           </div>
 
           {/* SOP type */}
           <div style={cardStyle}>
             <div style={{ fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "6px" }}>
-              How detailed do you want to go?
+              how detailed do you want to get?
             </div>
             <div style={{ fontSize: "13px", color: colors.textMuted, marginBottom: "16px" }}>
-              You can always add more later — start with whatever feels right.
+              you can always add more later. start wherever makes sense.
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
@@ -167,10 +167,10 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
           {/* Transcript paste */}
           <div style={{ ...cardStyle, background: gradients.warmBg, border: `1.5px solid ${colors.borderWarm}` }}>
             <div style={{ fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "6px" }}>
-              Already have a transcript or notes?
+              already have something written down?
             </div>
             <div style={{ fontSize: "13px", color: colors.textMuted, marginBottom: "14px", lineHeight: 1.6 }}>
-              Paste a transcript, meeting notes, or a rough write-up — AI will turn it into a draft SOP for you to review.
+              paste a transcript or rough notes. we'll pull out the structure and build a draft for you to look over.
             </div>
 
             {uploadError && (
@@ -214,7 +214,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
                       fontFamily: typography.fontFamily, transition: "all 0.15s",
                     }}
                   >
-                    Build my SOP draft
+                    build my draft
                   </button>
                   <input type="file" ref={fileRef} accept=".txt,.md,text/plain" style={{ display: "none" }} onChange={handleTranscriptUpload} />
                   <button
@@ -246,7 +246,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
               boxShadow: canContinue ? "0 4px 14px rgba(45,53,38,0.25)" : "none",
             }}
           >
-            {canContinue ? "Let's get started" : "Choose a style above to continue"}
+            {canContinue ? "let's go" : "pick a format above to keep going"}
           </button>
 
         </div>

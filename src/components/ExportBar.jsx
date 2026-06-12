@@ -63,7 +63,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
   // Step 1: branding confirmed → run AI polish → open review
   const handleConfirmExport = async () => {
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setEmailError("Please enter a valid email address so we can send you a copy.");
+      setEmailError("we need a real email to send this to you.");
       return;
     }
     setEmailError("");
@@ -119,9 +119,9 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
   const busy = status !== null;
 
   const statusLabel = status === "polishing"
-    ? "Polishing your language..."
+    ? "cleaning it up.."
     : status === "generating"
-    ? "Building your document..."
+    ? "building your document.."
     : null;
 
   const btnStyle = (primary) => ({
@@ -157,10 +157,10 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             maxHeight: "90vh", overflowY: "auto",
           }}>
             <h3 style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: typography.weights.bold, color: colors.primary, fontFamily: typography.fontFamily }}>
-              Almost ready — let's finish your document
+              almost there. one more thing.
             </h3>
             <p style={{ margin: "0 0 20px", fontSize: typography.sizes.body, color: colors.textMuted, lineHeight: 1.6, fontFamily: typography.fontFamily }}>
-              These details will appear on your exported SOP.
+              these details show up on your finished document.
             </p>
 
             {/* Your details */}
@@ -184,7 +184,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
                   <div style={{ fontSize: typography.sizes.caption, color: colors.danger, marginTop: "4px" }}>{emailError}</div>
                 )}
                 <div style={{ fontSize: typography.sizes.caption, color: colors.textFaint, marginTop: "4px" }}>
-                  We'll send a copy of your finished SOP to this address.
+                  we'll send your finished SOP here.
                 </div>
               </div>
               <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
@@ -254,7 +254,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             {empty.length > 0 && (
               <div style={{ background: "#FFF8F0", border: `1px solid ${colors.borderWarm}`, borderRadius: radii.lg, padding: "12px 14px", marginBottom: "16px" }}>
                 <div style={{ fontSize: typography.sizes.body2, fontWeight: typography.weights.semibold, color: colors.accentDark, marginBottom: "4px" }}>
-                  These sections are still empty:
+                  heads up - these sections are still empty:
                 </div>
                 {empty.map(k => (
                   <div key={k} style={{ fontSize: typography.sizes.caption, color: colors.textMuted }}>
@@ -283,7 +283,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
                   fontWeight: typography.weights.semibold, cursor: "pointer", fontFamily: typography.fontFamily,
                 }}
               >
-                Polish my SOP
+                looks good, let's go
               </button>
             </div>
           </div>
@@ -303,10 +303,10 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             {/* Header */}
             <div style={{ padding: "22px 24px 16px", borderBottom: `1px solid ${colors.border}`, flexShrink: 0 }}>
               <h3 style={{ margin: "0 0 4px", fontSize: "17px", fontWeight: typography.weights.bold, color: colors.primary, fontFamily: typography.fontFamily }}>
-                Review your SOP
+                take a look before you download.
               </h3>
               <p style={{ margin: 0, fontSize: typography.sizes.body, color: colors.textMuted, lineHeight: 1.5, fontFamily: typography.fontFamily }}>
-                AI has written these sections in paragraph form. Edit anything that doesn't sound right before downloading.
+                AI wrote these sections out in paragraph form. change anything that doesn't sound right.
               </p>
             </div>
 
@@ -314,7 +314,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             <div style={{ flex: 1, overflowY: "auto", padding: "20px 24px" }}>
               {reviewableSections.length === 0 ? (
                 <p style={{ color: colors.textMuted, fontSize: typography.sizes.body }}>
-                  Nothing to review — your SOP is ready to download.
+                  nothing to review. you're good to go.
                 </p>
               ) : (
                 reviewableSections.map(key => (
@@ -393,7 +393,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
               Word / Google Docs
             </button>
             <div style={{ fontSize: typography.sizes.caption, color: colors.textFaint, display: "flex", alignItems: "center" }}>
-              AI polishes your language before exporting
+              AI cleans it up before it goes out
             </div>
           </>
         )}
