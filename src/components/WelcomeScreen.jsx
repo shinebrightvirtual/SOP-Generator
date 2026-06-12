@@ -116,7 +116,7 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
           {/* SOP type */}
           <div style={cardStyle}>
             <div style={{ fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "6px" }}>
-              how detailed do you want to get?
+              How detailed do you want to get?
             </div>
             <div style={{ fontSize: "13px", color: colors.textMuted, marginBottom: "16px" }}>
               You can always add more later - start wherever makes the most sense for you.
@@ -166,10 +166,10 @@ export default function WelcomeScreen({ onStart, onTranscriptReady, isEmbedded }
           {/* Transcript paste */}
           <div style={{ ...cardStyle, background: gradients.warmBg, border: `1.5px solid ${colors.borderWarm}` }}>
             <div style={{ fontWeight: typography.weights.semibold, fontSize: typography.sizes.bodyLg, color: colors.primary, marginBottom: "6px" }}>
-              already have something written down?
+              Already have something written down?
             </div>
             <div style={{ fontSize: "13px", color: colors.textMuted, marginBottom: "14px", lineHeight: 1.6 }}>
-              paste a transcript or rough notes. we'll pull out the structure and build a draft for you to look over.
+              Paste a transcript or rough notes. We'll pull out the structure and build a draft for you to look over.
             </div>
 
             {uploadError && (

@@ -63,7 +63,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
   // Step 1: branding confirmed → run AI polish → open review
   const handleConfirmExport = async () => {
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setEmailError("we need a real email to send this to you.");
+      setEmailError("We need a real email to send this to you.");
       return;
     }
     setEmailError("");
@@ -160,7 +160,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
               Almost there - one more thing.
             </h3>
             <p style={{ margin: "0 0 20px", fontSize: typography.sizes.body, color: colors.textMuted, lineHeight: 1.6, fontFamily: typography.fontFamily }}>
-              these details show up on your finished document.
+              These details show up on your finished document.
             </p>
 
             {/* Your details */}
@@ -184,7 +184,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
                   <div style={{ fontSize: typography.sizes.caption, color: colors.danger, marginTop: "4px" }}>{emailError}</div>
                 )}
                 <div style={{ fontSize: typography.sizes.caption, color: colors.textFaint, marginTop: "4px" }}>
-                  we'll send your finished SOP here.
+                  We'll send your finished SOP here.
                 </div>
               </div>
               <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
@@ -254,7 +254,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
             {empty.length > 0 && (
               <div style={{ background: "#FFF8F0", border: `1px solid ${colors.borderWarm}`, borderRadius: radii.lg, padding: "12px 14px", marginBottom: "16px" }}>
                 <div style={{ fontSize: typography.sizes.body2, fontWeight: typography.weights.semibold, color: colors.accentDark, marginBottom: "4px" }}>
-                  heads up - these sections are still empty:
+                  Heads up - these sections are still empty:
                 </div>
                 {empty.map(k => (
                   <div key={k} style={{ fontSize: typography.sizes.caption, color: colors.textMuted }}>
@@ -393,7 +393,7 @@ export default function ExportBar({ data, brand, setBrand, sopType }) {
               Word / Google Docs
             </button>
             <div style={{ fontSize: typography.sizes.caption, color: colors.textFaint, display: "flex", alignItems: "center" }}>
-              AI cleans it up before it goes out
+              AI cleans it up before it goes out.
             </div>
           </>
         )}
