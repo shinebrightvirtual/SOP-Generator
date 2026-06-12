@@ -15,6 +15,15 @@ import { SECTIONS, SECTION_ORDER } from "./sections.js";
 
 function hex(h) { return h.replace("#", ""); }
 
+const MINOR = new Set(["a","an","the","and","but","or","for","nor","on","at","to","by","in","of","up","as","with"]);
+function toTitleCase(str) {
+  return String(str).split(" ").map((w, i) =>
+    (i === 0 || !MINOR.has(w.toLowerCase()))
+      ? w.charAt(0).toUpperCase() + w.slice(1)
+      : w.toLowerCase()
+  ).join(" ");
+}
+
 function rule(color) {
   return { bottom: { color, space: 1, style: BorderStyle.SINGLE, size: 6 } };
 }
@@ -178,7 +187,7 @@ export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
     if (key === "__tools__") {
       children.push(sectionHeading("Tools"));
       toolMap.forEach(({ display }) => {
-        children.push(bulletItem(display));
+        children.push(bulletItem(toTitleCase(display)));
       });
       continue;
     }

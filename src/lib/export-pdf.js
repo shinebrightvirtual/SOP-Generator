@@ -90,6 +90,27 @@ function collectTools(data) {
   return toolMap;
 }
 
+// ─── TITLE CASE ───────────────────────────────────────────────────────────────
+const MINOR = new Set(["a","an","the","and","but","or","for","nor","on","at","to","by","in","of","up","as","with"]);
+function toTitleCase(str) {
+  return String(str).split(" ").map((w, i) =>
+    (i === 0 || !MINOR.has(w.toLowerCase()))
+      ? w.charAt(0).toUpperCase() + w.slice(1)
+      : w.toLowerCase()
+  ).join(" ");
+}
+
+// ─── SPLIT INTO SHORT PARAGRAPHS (2 sentences each) ─────────────────────────
+function splitParagraphs(text) {
+  const sentences = String(text).match(/[^.!?]+[.!?]+["']?\s*/g) || [text];
+  const chunks = [];
+  for (let i = 0; i < sentences.length; i += 2) {
+    const chunk = sentences.slice(i, i + 2).join("").trim();
+    if (chunk) chunks.push(chunk);
+  }
+  return chunks.length ? chunks : [text];
+}
+
 // ─── IMAGE DIMENSIONS ─────────────────────────────────────────────────────────
 function getImageDimensions(dataUrl) {
   return new Promise((resolve) => {
@@ -233,13 +254,17 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
     y += 4; // 4mm gap before content
   }
 
-  // ─── PARAGRAPH HELPER ───────────────────────────────────────────────────────
+  // ─── PARAGRAPH HELPER (splits into ~2-sentence chunks for readability) ───────
   function drawParagraph(text, color = [51, 51, 51]) {
     if (!text || !String(text).trim()) return;
-    const needed = wrappedHeight(doc, text, CW, 9) + 2;
-    checkPage(needed);
+    const chunks = splitParagraphs(text);
     doc.setTextColor(...color);
-    y = addText(doc, text, ML, y, CW, 9, "normal", 1.5);
+    chunks.forEach((chunk, i) => {
+      const needed = wrappedHeight(doc, chunk, CW, 9) + 2;
+      checkPage(needed);
+      y = addText(doc, chunk, ML, y, CW, 9, "normal", 1.5);
+      if (i < chunks.length - 1) y += 3; // gap between mini-paragraphs
+    });
   }
 
   // ─── BULLET LIST HELPER ─────────────────────────────────────────────────────
@@ -289,12 +314,10 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
         checkPage(8);
         doc.setFontSize(9);
         doc.setFont("helvetica", "normal");
-        doc.setTextColor(51, 51, 51);
-        // Bullet dot in accent color
         doc.setTextColor(ar, ag, ab);
         doc.text("•", ML, y);
         doc.setTextColor(51, 51, 51);
-        y = addText(doc, display, ML + 5, y, CW - 5, 9, "normal", 1.5);
+        y = addText(doc, toTitleCase(display), ML + 5, y, CW - 5, 9, "normal", 1.5);
         y += 1.5;
       });
       continue;
@@ -359,12 +382,13 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
           // PART header if we have phase names
           if (phases[i]) {
             const partLabel = `PART ${i + 1} — ${String(phases[i]).trim()}`;
-            checkPage(14);
+            const partLines = doc.splitTextToSize(partLabel, CW);
+            checkPage(partLines.length * lineH(10, 1.4) + 4);
             doc.setFontSize(10);
             doc.setFont("helvetica", "bold");
             doc.setTextColor(51, 51, 51);
-            doc.text(partLabel, ML, y);
-            y += lineH(10, 1.4) + 2;
+            doc.text(partLines, ML, y);
+            y += partLines.length * lineH(10, 1.4) + 2;
           } else {
             // Plain step number
             checkPage(10);
@@ -382,7 +406,7 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
           y = addText(doc, step.what, ML, y, CW, 9, "normal", 1.5);
 
           // Tools + Time italic grey line
-          const toolStr = step.tools ? `Tools: ${step.tools}` : "";
+          const toolStr = step.tools ? `Tools: ${step.tools.split(",").map(t => toTitleCase(t.trim())).join(", ")}` : "";
           const timeStr = step.time  ? `Time: ${step.time}`   : "";
           const metaStr = [toolStr, timeStr].filter(Boolean).join(" · ");
           if (metaStr) {
