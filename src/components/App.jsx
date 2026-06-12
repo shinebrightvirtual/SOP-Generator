@@ -26,7 +26,9 @@ export default function App() {
   const [sopType, setSopType] = useState("basic");
   const [activeView, setActiveView] = useState("editor");
   const [activeSection, setActiveSection] = useState("overview");
-  const [data, setData] = useState({});
+  const [data, setData] = useState({
+    overview: { versionDate: new Date().toISOString().slice(0, 10) },
+  });
   const [brand, setBrand] = useState({ ...DEFAULT_BRAND });
 
   const [aiMode, setAiMode] = useState(false);
