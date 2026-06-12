@@ -91,7 +91,13 @@ export default function App() {
   };
 
   const handleConfirmAll = () => {
-    setData(aiData);
+    setData({
+      ...aiData,
+      overview: {
+        ...aiData.overview,
+        versionDate: new Date().toISOString().slice(0, 10),
+      },
+    });
     setAiMode(false);
     setSectionStatuses({});
     setActiveView("editor");
