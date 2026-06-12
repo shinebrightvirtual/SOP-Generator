@@ -199,6 +199,9 @@ export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
     );
     if (!hasContent && key !== "overview") continue;
 
+    // bigPicture is merged into detailedSteps as PART headers — skip entirely if detailed steps exist
+    if (key === "bigPicture" && (data.detailedSteps?.steps || []).some(s => s?.what?.trim())) continue;
+
     children.push(sectionHeading(sec.title));
 
     // ── Overview: metadata ───────────────────────────────────────────────────
@@ -216,10 +219,11 @@ export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
       const phases = data.bigPicture?.flowSteps || [];
       steps.forEach((step, i) => {
         if (!step?.what?.trim()) return;
-        if (phases[i]) {
+        const phaseLabel = step.phase?.trim() || (phases[i] ? String(phases[i]).trim() : null);
+        if (phaseLabel) {
           children.push(
             new Paragraph({
-              children: [new TextRun({ text: `PART ${i + 1} — ${String(phases[i]).trim()}`, bold: true, size: 22, color: "333333" })],
+              children: [new TextRun({ text: `PART ${i + 1} — ${phaseLabel}`, bold: true, size: 22, color: "333333" })],
               spacing: sp(280, 100),
             })
           );
@@ -241,10 +245,8 @@ export async function exportToDOCX(data, brand, isPro, paragraphs = {}) {
       continue;
     }
 
-    // ── BigPicture standalone (no detailed steps) ────────────────────────────
+    // ── BigPicture standalone (only reaches here when no detailed steps) ────────
     if (key === "bigPicture") {
-      const hasDetailedSteps = (data.detailedSteps?.steps || []).some(s => s?.what?.trim());
-      if (hasDetailedSteps) continue;
       const flowSteps = (sData.flowSteps || []).filter(v => typeof v === "string" && v.trim());
       flowSteps.forEach((step, i) => {
         children.push(

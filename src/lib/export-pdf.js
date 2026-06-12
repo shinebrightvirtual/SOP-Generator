@@ -338,6 +338,9 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
     });
     if (!hasContent && key !== "overview") continue;
 
+    // bigPicture is merged into detailedSteps as PART headers — skip entirely if detailed steps exist
+    if (key === "bigPicture" && (data.detailedSteps?.steps || []).some(s => s?.what?.trim())) continue;
+
     // Section gap
     y += 10;
     checkPage(20);
@@ -379,9 +382,10 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
           const step = steps[i];
           if (!step?.what?.trim()) continue;
 
-          // PART header if we have phase names
-          if (phases[i]) {
-            const partLabel = `PART ${i + 1} — ${String(phases[i]).trim()}`;
+          // PART header — prefer phase from the step itself, fall back to bigPicture flowSteps
+          const phaseLabel = step.phase?.trim() || (phases[i] ? String(phases[i]).trim() : null);
+          if (phaseLabel) {
+            const partLabel = `PART ${i + 1} — ${phaseLabel}`;
             const partLines = doc.splitTextToSize(partLabel, CW);
             checkPage(partLines.length * lineH(10, 1.4) + 4);
             doc.setFontSize(10);
@@ -426,12 +430,8 @@ export async function exportToPDF(data, brand, isPro, paragraphs = {}) {
       continue;
     }
 
-    // ── BIG PICTURE: skip standalone — merged into detailedSteps above ────────
+    // ── BIG PICTURE: standalone numbered list (only reaches here when no detailed steps) ──
     if (key === "bigPicture") {
-      // If there are no detailed steps, render flowSteps as a simple numbered list
-      const hasDetailedSteps = (data.detailedSteps?.steps || []).some(s => s?.what?.trim());
-      if (hasDetailedSteps) continue; // already rendered as part headers above
-
       const flowSteps = sData.flowSteps || [];
       const clean = flowSteps.filter(v => typeof v === "string" && v.trim());
       if (!clean.length) continue;

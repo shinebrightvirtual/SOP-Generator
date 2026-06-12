@@ -9,7 +9,7 @@ function buildPrompt(transcript) {
       if (field.type === "steplist") {
         structure[key][field.key] = ["", "", "", "", ""];
       } else if (field.type === "detailedsteps") {
-        structure[key][field.key] = [{ what: "", tools: "", time: "" }];
+        structure[key][field.key] = [{ phase: "", what: "", tools: "", time: "" }];
       } else if (field.type === "bulletlist") {
         structure[key][field.key] = ["", ""];
       } else {
@@ -30,6 +30,7 @@ Rules:
 - Fill in every field with intelligent suggestions based on the transcript
 - If something isn't explicitly mentioned, make a reasonable inference
 - Keep language clear, professional, and actionable
+- Each detailed step must include a 'phase' field: a short title (4-7 words) summarizing what that step does — e.g. "Duplicate template in Shopify". These phase titles together form the high-level overview of the process. There must be exactly one phase per step.
 - Each detailed step should be specific enough that someone unfamiliar could follow it
 
 Transcript:
