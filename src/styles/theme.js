@@ -47,7 +47,7 @@ export const S = {
     border: `1px dashed ${colors.borderDashed}`,
   },
   secNum: (c) => ({ fontSize: typography.sizes.xs, fontWeight: typography.weights.bold, color: c || colors.accent, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: "3px" }),
-  secTitle: { fontSize: typography.sizes.h2, fontWeight: typography.weights.bold, color: colors.primary, margin: "0 0 2px", letterSpacing: "-0.3px" },
+  secTitle: { fontSize: "22px", fontWeight: 700, color: colors.primary, margin: "0 0 2px", letterSpacing: "-0.3px", fontFamily: typography.fontFamilyDisplay, lineHeight: 1.2 },
   secSub: { fontSize: typography.sizes.body2, color: colors.textMuted, margin: "0 0 20px", fontStyle: "italic" },
   fieldGroup: { marginBottom: "16px" },
   label: { display: "block", fontSize: typography.sizes.body2, fontWeight: typography.weights.semibold, color: colors.textLabel, marginBottom: "5px" },
@@ -84,9 +84,11 @@ export const S = {
   },
   tabRow: { display: "flex", gap: "4px", marginBottom: "20px" },
   tab: (active) => ({
-    padding: "9px 18px", borderRadius: "10px 10px 0 0", border: "none", fontSize: typography.sizes.body2, fontWeight: active ? typography.weights.semibold : typography.weights.medium,
-    background: active ? colors.primary : "#DDD9D1", color: active ? colors.white : colors.textMuted,
+    padding: "8px 18px", borderRadius: "8px", border: "none", fontSize: typography.sizes.body2, fontWeight: active ? typography.weights.semibold : typography.weights.medium,
+    background: active ? colors.primary : "transparent",
+    color: active ? colors.white : colors.textMuted,
     cursor: "pointer", fontFamily: typography.fontFamily,
+    transition: "all 0.2s",
   }),
   exportBar: {
     position: "fixed", bottom: 0, left: 0, right: 0, background: colors.white,

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { SECTION_ORDER, getSectionsForType } from "../lib/sections.js";
-import { S } from "../styles/theme.js";
+import { S, colors } from "../styles/theme.js";
 import { typography } from "../styles/theme.js";
 
 import WelcomeScreen from "./WelcomeScreen.jsx";
@@ -136,8 +136,8 @@ export default function App() {
     <div style={{ ...S.app, background: isEmbedded ? "#EBE6E3" : S.app.background }}>
       {!isEmbedded && <SiteNav />}
 
-      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "20px 16px 0" }}>
-        <div style={{ ...S.tabRow, justifyContent: "center", marginBottom: "24px" }}>
+      <div style={{ background: colors.white, borderBottom: `1px solid ${colors.border}`, padding: "8px 16px" }}>
+        <div style={{ maxWidth: "720px", margin: "0 auto", display: "flex", gap: "4px" }}>
           <button style={S.tab(activeView === "editor")} onClick={() => setActiveView("editor")}>
             {aiMode ? "Review" : "Editor"}
           </button>

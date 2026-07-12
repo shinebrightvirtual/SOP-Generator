@@ -55,8 +55,9 @@ export const colors = {
 
 export const typography = {
   fontFamily: "'Lato', sans-serif",
+  fontFamilyDisplay: "'Playfair Display', Georgia, serif",
   fontUrl:
-    "https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap",
   sizes: {
     xs: "9px",
     sm: "10px",
