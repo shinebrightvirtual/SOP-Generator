@@ -150,8 +150,15 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
 
               <button onClick={() => setSopType("basic")} style={optCard(sopType === "basic", colors.primary)}>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
-                  <span style={{ fontSize: "20px", lineHeight: 1, marginTop: "1px", flexShrink: 0 }}>🗂</span>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
+                  <div style={{
+                    width: "32px", height: "32px", borderRadius: "8px", flexShrink: 0, marginTop: "1px",
+                    background: sopType === "basic" ? colors.primary : colors.border,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "background 0.15s",
+                  }}>
+                    <div style={{ width: "12px", height: "12px", border: `2px solid ${sopType === "basic" ? colors.white : colors.textMuted}`, borderRadius: "2px", transition: "border-color 0.15s" }} />
+                  </div>
                   <div>
                     <div style={{ fontFamily: typography.fontFamily, fontWeight: 700, fontSize: "13px", color: colors.primary, marginBottom: "3px" }}>
                       Basic — the essentials
@@ -164,8 +171,19 @@ export default function WelcomeScreen({ onStart, onTranscriptReady }) {
               </button>
 
               <button onClick={() => setSopType("detailed")} style={optCard(sopType === "detailed", colors.accent)}>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
-                  <span style={{ fontSize: "20px", lineHeight: 1, marginTop: "1px", flexShrink: 0 }}>📋</span>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
+                  <div style={{
+                    width: "32px", height: "32px", borderRadius: "8px", flexShrink: 0, marginTop: "1px",
+                    background: sopType === "detailed" ? colors.accent : colors.border,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "background 0.15s",
+                  }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                      {[0,1,2].map(i => (
+                        <div key={i} style={{ width: sopType === "detailed" ? [12,10,8][i] : [10,8,6][i], height: "2px", background: sopType === "detailed" ? colors.white : colors.textMuted, borderRadius: "1px", transition: "all 0.15s" }} />
+                      ))}
+                    </div>
+                  </div>
                   <div>
                     <div style={{ fontFamily: typography.fontFamily, fontWeight: 700, fontSize: "13px", color: colors.primary, marginBottom: "3px" }}>
                       Full Detail — the complete picture
