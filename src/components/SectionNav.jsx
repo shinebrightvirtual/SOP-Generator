@@ -1,42 +1,54 @@
 import { SECTIONS } from "../lib/sections.js";
-import { S, colors, typography, radii } from "../styles/theme.js";
+import { colors, typography } from "../styles/theme.js";
 
 export default function SectionNav({ activeSection, sectionKeys, onSelect }) {
   const currentIdx = sectionKeys.indexOf(activeSection);
   const progress = ((currentIdx + 1) / sectionKeys.length) * 100;
 
   return (
-    <div>
-      {/* Progress bar */}
-      <div style={{ background: colors.white, borderBottom: `1px solid ${colors.border}` }}>
-        <div style={{ height: "3px", background: colors.border }}>
-          <div style={{
-            height: "100%", width: `${progress}%`, background: colors.accent,
-            transition: "width 0.4s ease", borderRadius: "0 2px 2px 0",
-          }} />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 16px 4px" }}>
-          <span style={{ fontSize: typography.sizes.caption, color: colors.textFaint }}>
-            Section {currentIdx + 1} of {sectionKeys.length}
-          </span>
-          <span style={{ fontSize: typography.sizes.caption, color: colors.accent, fontWeight: typography.weights.semibold }}>
-            {Math.round(progress)}% complete
-          </span>
-        </div>
+    <div style={{ background: colors.white, borderBottom: `1px solid ${colors.border}` }}>
+      {/* Thin progress line */}
+      <div style={{ height: "2px", background: colors.border }}>
+        <div style={{
+          height: "100%",
+          width: `${progress}%`,
+          background: colors.accent,
+          transition: "width 0.4s ease",
+        }} />
       </div>
 
-      {/* Section tabs */}
-      <div style={S.navBar}>
+      {/* Section tabs — underline style */}
+      <div style={{
+        display: "flex",
+        overflowX: "auto",
+        padding: "0 16px",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}>
         {sectionKeys.map(key => {
           const sec = SECTIONS[key];
           const active = activeSection === key;
           return (
             <button
               key={key}
-              style={S.navItem(active)}
               onClick={() => onSelect(key)}
+              style={{
+                padding: "11px 14px",
+                background: "transparent",
+                border: "none",
+                borderBottom: `2px solid ${active ? colors.accent : "transparent"}`,
+                color: active ? colors.primary : colors.textMuted,
+                fontSize: "12px",
+                fontWeight: active ? 700 : 400,
+                cursor: "pointer",
+                fontFamily: typography.fontFamily,
+                whiteSpace: "nowrap",
+                transition: "color 0.15s, border-color 0.15s",
+                marginBottom: "-1px",
+                lineHeight: 1,
+              }}
             >
-              {sec.num}. {sec.title}
+              {sec.title}
             </button>
           );
         })}

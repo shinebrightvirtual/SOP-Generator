@@ -59,20 +59,13 @@ export default function ManualEditor({ activeSection, sectionKeys, data, onField
     <div>
       <div style={S.card}>
         {/* Section header */}
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-          <div style={{
-            width: "28px", height: "28px", borderRadius: "50%", background: colors.primary,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: typography.sizes.caption, fontWeight: typography.weights.bold, color: colors.white, flexShrink: 0,
-          }}>
-            {section.num}
+        <div style={{ borderLeft: `3px solid ${colors.accent}`, paddingLeft: "14px", marginBottom: "22px" }}>
+          <div style={{ fontSize: "11px", color: colors.textFaint, fontFamily: typography.fontFamily, marginBottom: "5px", letterSpacing: "0.3px" }}>
+            {section.num} / {sectionKeys.length}
           </div>
-          <div style={{ fontSize: typography.sizes.xs, fontWeight: typography.weights.bold, color: colors.accent, textTransform: "uppercase", letterSpacing: "1.5px" }}>
-            Section {section.num} of {sectionKeys.length}
-          </div>
+          <h2 style={{ ...S.secTitle, margin: "0 0 5px" }}>{section.title}</h2>
+          <p style={{ ...S.secSub, margin: 0 }}>{section.subtitle}</p>
         </div>
-        <h2 style={S.secTitle}>{section.title}</h2>
-        <p style={S.secSub}>{section.subtitle}</p>
 
         {renderFields()}
 
