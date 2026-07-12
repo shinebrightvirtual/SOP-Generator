@@ -91,11 +91,11 @@ export const spacing = {
 };
 
 export const radii = {
-  sm: "6px",
+  sm: "4px",
   md: "8px",
-  lg: "10px",
-  xl: "12px",
-  card: "16px",
+  lg: "8px",
+  xl: "8px",
+  card: "8px",
 };
 
 export const shadows = {

@@ -23,7 +23,7 @@ export default function DetailedStepsField({ field, value, onChange, context = {
     <div style={S.fieldGroup}>
       <label style={S.label}>{field.label}</label>
       {steps.map((step, i) => (
-        <div key={step.id} style={{ background: "#FAFAF8", borderRadius: "12px", padding: "14px", marginBottom: "10px", border: "1px solid #EDE9E3" }}>
+        <div key={step.id} style={{ background: "#FAFAF8", borderRadius: "8px", padding: "14px", marginBottom: "10px", border: "1px solid #EDE9E3" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <div style={S.stepNum}>{i + 1}</div>

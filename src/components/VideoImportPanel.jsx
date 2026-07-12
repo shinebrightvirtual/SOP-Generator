@@ -76,7 +76,7 @@ export default function VideoImportPanel({ onTranscriptReady }) {
         {expanded && (
           <div style={{ marginTop: "14px" }}>
             {error && (
-              <div style={{ padding: "10px 14px", borderRadius: "10px", background: colors.dangerBg, color: colors.danger, fontSize: "12px", marginBottom: "12px" }}>
+              <div style={{ padding: "10px 14px", borderRadius: "8px", background: colors.dangerBg, color: colors.danger, fontSize: "12px", marginBottom: "12px" }}>
                 {error}
               </div>
             )}

@@ -12,7 +12,7 @@ export default function PreviewPanel({ data, brand, sopType }) {
   const ov = data.overview || {};
 
   return (
-    <div style={{ background: "#FFF", borderRadius: "16px", padding: "28px 24px", border: `1px solid ${colors.border}`, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
+    <div style={{ background: "#FFF", borderRadius: "8px", padding: "28px 24px", border: `1px solid ${colors.border}`, boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
 
       {/* Title block */}
       <div style={{ borderBottom: `3px solid ${pc}`, paddingBottom: "14px", marginBottom: "22px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px" }}>
